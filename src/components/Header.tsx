@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, ShoppingCart, User, Search, Package, Heart } from "lucide-react";
+import { Menu, X, ShoppingCart, User, Search, Package, Heart, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import { useUser } from "@/context/UserContext";
 import SearchBox from "./SearchBox";
 
 const Header = () => {
@@ -11,6 +12,7 @@ const Header = () => {
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const userDropdownRef = useRef<HTMLDivElement>(null);
   const { getCartItemCount, getFavoriteCount } = useCart();
+  const { userData } = useUser();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -105,34 +107,51 @@ const Header = () => {
                         <User className="h-5 w-5 text-gray-600" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900">Olá, visitante</p>
-                        <p className="text-sm text-gray-500">Entrar ou Cadastrar</p>
+                        <p className="font-semibold text-gray-900">
+                          {userData ? `Olá, ${userData.nome.split(' ')[0]}` : 'Olá, visitante'}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {userData ? 'Sua conta' : 'Entrar ou Cadastrar'}
+                        </p>
                       </div>
                     </div>
                   </div>
                   
                   {/* Menu Items */}
                   <div className="p-2">
-                    <Link to="/minha-conta" className="flex items-center space-x-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                        <User className="h-4 w-4 text-gray-600" />
-                      </div>
-                      <span>Minha Conta</span>
-                    </Link>
-                    
-                    <Link to="/meus-pedidos" className="flex items-center space-x-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Package className="h-4 w-4 text-gray-600" />
-                      </div>
-                      <span>Meus Pedidos</span>
-                    </Link>
-                    
-                    <Link to="/desejos" className="flex items-center space-x-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Heart className="h-4 w-4 text-gray-600" />
-                      </div>
-                      <span>Desejos</span>
-                    </Link>
+                    {userData ? (
+                      <>
+                        <Link to="/minha-conta" className="flex items-center space-x-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                          <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                            <User className="h-4 w-4 text-gray-600" />
+                          </div>
+                          <span>Minha Conta</span>
+                        </Link>
+                        
+                        <Link to="/meus-pedidos" className="flex items-center space-x-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                          <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                            <Package className="h-4 w-4 text-gray-600" />
+                          </div>
+                          <span>Meus Pedidos</span>
+                        </Link>
+                        
+                        <Link to="/desejos" className="flex items-center space-x-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                          <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                            <Heart className="h-4 w-4 text-gray-600" />
+                          </div>
+                          <span>Desejos</span>
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link to="/login" className="flex items-center space-x-3 px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-md transition-colors">
+                          <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <LogIn className="h-4 w-4 text-blue-600" />
+                          </div>
+                          <span>Entrar / Cadastrar</span>
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </div>
               )}

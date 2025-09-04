@@ -2,6 +2,7 @@ import { Star, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "react-router-dom";
 import ReviewSummary from "@/components/ReviewSummary";
 import { useGlobalProductReviews } from "@/hooks/useGlobalProductReviews";
 
@@ -162,9 +163,11 @@ const FeaturedProducts = () => {
         </div>
 
         <div className="text-center">
-          <Button variant="outline" size="lg">
-            Ver Todos os Produtos
-          </Button>
+          <Link to="/produtos">
+            <Button variant="outline" size="lg">
+              Ver Todos os Produtos
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

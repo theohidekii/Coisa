@@ -138,20 +138,18 @@ const MinhaConta = () => {
     <div className="min-h-screen bg-slate-50">
       <Header />
       
+      <div className="container mx-auto px-6 py-12">
+        <div className="max-w-4xl mx-auto">
       {/* Back Button */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="container mx-auto px-6 py-3">
+          <div className="mb-6">
           <Link to="/">
             <Button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
               <ArrowLeft className="h-4 w-4" />
               <span>Voltar</span>
             </Button>
           </Link>
-        </div>
       </div>
 
-      <div className="container mx-auto px-6 py-12">
-        <div className="max-w-4xl mx-auto">
           {/* Page Header */}
           <div className="text-center mb-12">
             <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -512,7 +510,7 @@ const MinhaConta = () => {
                       <Plus className="h-4 w-4 mr-2" />
                       Adicionar Primeiro Endereço
                     </Button>
-                  </div>
+                </div>
                 )}
               </CardContent>
             </Card>
