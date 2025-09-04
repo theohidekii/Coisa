@@ -29,21 +29,8 @@ const Carrinho = () => {
   const [addressInfo, setAddressInfo] = useState<any>(null);
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
 
-  const [cep, setCep] = useState("");
-  const [shippingCost, setShippingCost] = useState(0);
-  const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
-  const [shippingInfo, setShippingInfo] = useState<any>(null);
-  const [addressInfo, setAddressInfo] = useState<any>(null);
-  const [isLoadingAddress, setIsLoadingAddress] = useState(false);
-
   const calculateSubtotal = () => {
     return getCartTotal();
-  };
-
-  const calculateTotal = () => {
-    const subtotal = calculateSubtotal();
-    // O frete não é adicionado ao total, apenas informativo
-    return subtotal;
   };
 
   const calculateTotal = () => {
@@ -182,15 +169,15 @@ const Carrinho = () => {
             /* Cart Content */
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
               {/* Cart Items */}
-              <div className="lg:col-span-2 space-y-3 md:space-y-6">
-                <h2 className="text-lg md:text-xl font-semibold text-slate-900 mb-3 md:mb-6">Itens no Carrinho ({cartItems.length})</h2>
+              <div className="lg:col-span-2 space-y-4 md:space-y-6">
+                <h2 className="text-lg md:text-xl font-semibold text-slate-900 mb-4 md:mb-6">Itens no Carrinho ({cartItems.length})</h2>
                 
                 {cartItems.map((item) => (
                   <Card key={item.id} className="border-0 shadow-sm bg-white rounded-xl overflow-hidden">
-                    <CardContent className="p-3 md:p-6">
-                      <div className="flex items-start space-x-3 md:space-x-4">
+                    <CardContent className="p-4 md:p-6">
+                      <div className="flex items-start space-x-4 md:space-x-6">
                         {/* Product Image */}
-                        <div className="w-20 h-20 md:w-24 md:h-24 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
+                        <div className="w-24 h-24 md:w-28 md:h-28 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
                           <img 
                             src={item.image} 
                             alt={item.name}
@@ -200,11 +187,12 @@ const Carrinho = () => {
 
                         {/* Product Info and Controls */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="flex-1 min-w-0">
-                              <h3 className="text-sm md:text-lg font-semibold text-slate-900 mb-1 truncate">{item.name}</h3>
-                              <p className="text-xs md:text-sm text-slate-500 mb-1">{item.category}</p>
-                              <p className="text-sm md:text-lg font-bold text-blue-600">{formatPrice(item.price)}</p>
+                          {/* Product Header */}
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex-1 min-w-0 pr-2">
+                              <h3 className="text-base md:text-lg font-semibold text-slate-900 mb-1 leading-tight">{item.name}</h3>
+                              <p className="text-xs md:text-sm text-slate-500 mb-2">{item.category}</p>
+                              <p className="text-base md:text-lg font-bold text-blue-600">{formatPrice(item.price)}</p>
                             </div>
                             
                             {/* Remove Button */}
@@ -212,25 +200,25 @@ const Carrinho = () => {
                               variant="ghost"
                               size="sm"
                               onClick={() => removeFromCart(item.id.toString())}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 md:p-2"
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2"
                             >
-                              <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
+                              <Trash2 className="h-5 w-5" />
                             </Button>
                           </div>
 
                           {/* Quantity Controls and Total */}
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2 md:space-x-3">
+                            <div className="flex items-center space-x-3">
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => updateQuantity(item.id.toString(), item.quantity - 1)}
-                                className="w-8 h-8 md:w-10 md:h-10 p-0 border-slate-300 hover:bg-slate-50"
+                                className="w-10 h-10 md:w-12 md:h-12 p-0 border-slate-300 hover:bg-slate-50"
                               >
-                                <Minus className="h-4 w-4 md:h-5 md:w-5" />
+                                <Minus className="h-5 w-5" />
                               </Button>
                               
-                              <span className="text-sm md:text-lg font-semibold text-slate-900 min-w-[2rem] text-center">
+                              <span className="text-base md:text-lg font-semibold text-slate-900 min-w-[3rem] text-center">
                                 {item.quantity}
                               </span>
                               
@@ -238,15 +226,15 @@ const Carrinho = () => {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => updateQuantity(item.id.toString(), item.quantity + 1)}
-                                className="w-8 h-8 md:w-10 md:h-10 p-0 border-slate-300 hover:bg-slate-50"
+                                className="w-10 h-10 md:w-12 md:h-12 p-0 border-slate-300 hover:bg-slate-50"
                               >
-                                <Plus className="h-4 w-4 md:h-5 md:w-5" />
+                                <Plus className="h-5 w-5" />
                               </Button>
                             </div>
 
                             {/* Item Total */}
                             <div className="text-right">
-                              <p className="text-sm md:text-lg font-bold text-slate-900">{formatPrice(item.price * item.quantity)}</p>
+                              <p className="text-base md:text-lg font-bold text-slate-900">{formatPrice(item.price * item.quantity)}</p>
                             </div>
                           </div>
                         </div>
@@ -260,17 +248,17 @@ const Carrinho = () => {
               <div className="lg:col-span-1">
                 <Card className="border-0 shadow-lg bg-white rounded-2xl overflow-hidden sticky top-6">
                   <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100 p-4 md:p-6">
-                    <CardTitle className="flex items-center space-x-2 md:space-x-3 text-slate-800">
-                      <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                        <ShoppingCart className="h-4 w-4 md:h-5 md:w-5 text-white" />
+                    <CardTitle className="flex items-center space-x-3 md:space-x-4 text-slate-800">
+                      <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-base md:text-xl font-bold text-slate-900">Resumo do Pedido</h3>
-                        <p className="text-xs md:text-sm text-slate-600">Confirme seus itens</p>
+                        <h3 className="text-lg md:text-xl font-bold text-slate-900">Resumo do Pedido</h3>
+                        <p className="text-sm md:text-base text-slate-600">Confirme seus itens</p>
                       </div>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-3 md:p-6">
+                  <CardContent className="p-4 md:p-6">
                     {/* Summary Details */}
                     <div className="space-y-4 mb-6">
                       <div className="flex justify-between items-center">
@@ -377,24 +365,24 @@ const Carrinho = () => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="space-y-2 md:space-y-3">
+                    <div className="space-y-3 md:space-y-4">
                       <Link to="/checkout">
-                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 md:py-3 rounded-xl font-semibold text-sm md:text-base">
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 md:py-4 rounded-xl font-semibold text-base md:text-lg">
                           Finalizar Compra
                         </Button>
                       </Link>
                       
                       <Link to="/">
-                        <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 py-3 md:py-3 rounded-xl transition-colors text-sm md:text-base">
+                        <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 py-4 md:py-4 rounded-xl transition-colors text-base md:text-lg">
                           Continuar Comprando
                         </Button>
                       </Link>
                     </div>
 
                     {/* Additional Info */}
-                    <div className="mt-4 md:mt-6 p-3 md:p-4 bg-slate-50 rounded-lg">
-                      <h4 className="font-semibold text-slate-900 mb-2 text-sm md:text-base">Informações Importantes</h4>
-                      <ul className="text-xs md:text-sm text-slate-600 space-y-1">
+                    <div className="mt-6 md:mt-8 p-4 md:p-5 bg-slate-50 rounded-lg">
+                      <h4 className="font-semibold text-slate-900 mb-3 text-base md:text-lg">Informações Importantes</h4>
+                      <ul className="text-sm md:text-base text-slate-600 space-y-2">
                         <li>• Frete grátis para compras acima de R$ 150</li>
                         <li>• Entrega em até 3 dias úteis</li>
                         <li>• Pagamento seguro</li>

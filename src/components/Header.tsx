@@ -29,7 +29,6 @@ const Header = () => {
   const navigationItems = [
     { name: "Início", href: "/" },
     { name: "Produtos", href: "/produtos" },
-    { name: "Ofertas", href: "#ofertas" },
     { name: "Assistência Técnica", href: "/assistencia" },
     { name: "Contato", href: "#contato" },
   ];
@@ -84,7 +83,7 @@ const Header = () => {
           </nav>
 
           {/* Action Buttons */}
-          <div className="flex items-center space-x-2 md:space-x-4">
+          <div className="flex items-center space-x-4 md:space-x-8">
             {/* User Dropdown - Desktop */}
             <div className="relative hidden md:block" ref={userDropdownRef}>
               <Button 
@@ -139,8 +138,8 @@ const Header = () => {
               )}
             </div>
             
-            {/* Favoritos */}
-            <Link to="/desejos">
+            {/* Favoritos - Mobile Only */}
+            <Link to="/desejos" className="md:hidden">
               <Button variant="ghost" size="icon" className="relative">
                 <Heart className="h-5 w-5" />
                 {getFavoriteCount() > 0 && (
@@ -216,51 +215,61 @@ const Header = () => {
 
             {/* Navigation Items - Mobile */}
             <nav className="space-y-1 px-4 mb-6">
-              {navigationItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="flex items-center px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
-                  onClick={(e) => {
-                    setIsMenuOpen(false);
-                    if (item.href.startsWith('#')) {
-                      e.preventDefault();
-                      const element = document.querySelector(item.href);
-                      if (element) {
-                        element.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }
-                  }}
-                >
-                  <span className="text-base font-medium">{item.name}</span>
-                </a>
-              ))}
+              <Link 
+                to="/" 
+                className="flex items-center px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="text-base font-medium">Início</span>
+              </Link>
+              
+              <Link 
+                to="/produtos" 
+                className="flex items-center px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="text-base font-medium">Produtos</span>
+              </Link>
+              
+              <Link 
+                to="/assistencia" 
+                className="flex items-center px-4 py-3 text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="text-base font-medium">Assistência Técnica</span>
+              </Link>
             </nav>
+
+            {/* Account & Orders - Mobile Only */}
+            <div className="px-4 mb-6">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Minha Conta</h3>
+              <div className="space-y-2">
+                <Link 
+                  to="/minha-conta" 
+                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                    <User className="h-4 w-4 text-gray-600" />
+                  </div>
+                  <span className="font-medium">Minha Conta</span>
+                </Link>
+                
+                <Link 
+                  to="/meus-pedidos" 
+                  className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                    <Package className="h-4 w-4 text-gray-600" />
+                  </div>
+                  <span className="font-medium">Meus Pedidos</span>
+                </Link>
+              </div>
+            </div>
 
             {/* Quick Actions - Mobile */}
             <div className="px-4 space-y-2">
-              <Link 
-                to="/minha-conta" 
-                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <User className="h-4 w-4 text-gray-600" />
-                </div>
-                <span className="font-medium">Minha Conta</span>
-              </Link>
-              
-              <Link 
-                to="/meus-pedidos" 
-                className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <Package className="h-4 w-4 text-gray-600" />
-                </div>
-                <span className="font-medium">Meus Pedidos</span>
-              </Link>
-              
               <Link 
                 to="/desejos" 
                 className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"

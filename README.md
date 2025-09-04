@@ -76,9 +76,8 @@ Coisa é uma plataforma de e-commerce moderna e responsiva especializada em mate
 src/
 ├── components/          # Componentes reutilizáveis
 │   ├── ui/             # Componentes de UI base (Shadcn/ui)
-│   ├── Header.tsx      # Cabeçalho responsivo com menu mobile
+│   ├── Header.tsx      # Cabeçalho responsivo com menu mobile integrado
 │   ├── Footer.tsx      # Rodapé otimizado para mobile
-│   ├── BottomNavigation.tsx # Navegação inferior para mobile
 │   ├── BannerCarousel.tsx # Carrossel de banners responsivo
 │   ├── Categories.tsx  # Categorias de produtos
 │   └── ...
@@ -145,11 +144,12 @@ O projeto foi desenvolvido com foco total na experiência mobile:
 
 ### 🎯 Otimizações Mobile Implementadas
 - **Design Mobile-First**: Todos os componentes otimizados para mobile
-- **Navegação Inferior**: Menu de navegação fixo na parte inferior
-- **Menu Mobile**: Menu hambúrguer com todas as funcionalidades
+- **Menu Mobile Integrado**: Menu hambúrguer no header com todas as funcionalidades principais
+- **Navegação Simplificada**: Remoção da navegação inferior, foco no menu lateral
 - **Grids Responsivos**: Layouts que se adaptam a diferentes telas
 - **Touch-Friendly**: Botões e elementos otimizados para toque
 - **Performance**: Carregamento otimizado para dispositivos móveis
+- **Acesso à Conta**: Menu mobile dedicado para "Minha Conta" e "Meus Pedidos"
 
 ### 📱 Dispositivos Suportados
 - 📱 Smartphones (320px+)
@@ -200,6 +200,12 @@ O projeto foi desenvolvido com foco total na experiência mobile:
 - **Sincronização Automática**: Dados sincronizam ao fazer login
 - **Persistência**: Dados mantidos entre sessões
 - **Favoritos**: Sistema integrado com carrinho
+
+### Navegação Mobile Otimizada
+- **Menu Integrado**: Menu hambúrguer no header com funcionalidades principais
+- **Acesso à Conta**: Seção dedicada para "Minha Conta" e "Meus Pedidos"
+- **Navegação Simplificada**: Remoção da navegação inferior
+- **Páginas Legais**: FAQ, Termos de Uso e Política de Privacidade no footer
 
 ## 🤝 Contribuição
 
