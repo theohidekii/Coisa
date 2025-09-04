@@ -2,8 +2,13 @@ import { Star, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import ReviewSummary from "@/components/ReviewSummary";
+import { useGlobalProductReviews } from "@/hooks/useGlobalProductReviews";
 
 const FeaturedProducts = () => {
+  // Hook para avaliações globais
+  const { getProductReview } = useGlobalProductReviews();
+
   // Dados de exemplo - em produção virão do sistema de admin
   const products = [
     {
@@ -12,8 +17,6 @@ const FeaturedProducts = () => {
       price: 89.90,
       originalPrice: 119.90,
       image: "/api/placeholder/300/300",
-      rating: 4.8,
-      reviews: 124,
       category: "Tintas",
       badge: "Oferta"
     },
@@ -23,8 +26,6 @@ const FeaturedProducts = () => {
       price: 299.90,
       originalPrice: null,
       image: "/api/placeholder/300/300",
-      rating: 4.9,
-      reviews: 89,
       category: "Ferramentas",
       badge: "Destaque"
     },
@@ -34,8 +35,6 @@ const FeaturedProducts = () => {
       price: 24.90,
       originalPrice: 29.90,
       image: "/api/placeholder/300/300",
-      rating: 4.7,
-      reviews: 203,
       category: "Cimentos",
       badge: "Promoção"
     },
@@ -45,8 +44,6 @@ const FeaturedProducts = () => {
       price: 189.90,
       originalPrice: null,
       image: "/api/placeholder/300/300",
-      rating: 4.6,
-      reviews: 67,
       category: "Hidráulica",
       badge: "Novo"
     },
@@ -56,8 +53,6 @@ const FeaturedProducts = () => {
       price: 45.90,
       originalPrice: 55.90,
       image: "/api/placeholder/300/300",
-      rating: 4.8,
-      reviews: 156,
       category: "Pisos",
       badge: "Oferta"
     },
@@ -67,8 +62,6 @@ const FeaturedProducts = () => {
       price: 149.90,
       originalPrice: null,
       image: "/api/placeholder/300/300",
-      rating: 4.5,
-      reviews: 78,
       category: "Ferramentas",
       badge: "Kit"
     }
@@ -134,9 +127,21 @@ const FeaturedProducts = () => {
 
                 {/* Rating */}
                 <div className="flex items-center space-x-1 mb-3">
-                  <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                  <span className="text-xs font-medium">{product.rating}</span>
-                  <span className="text-xs text-muted-foreground">({product.reviews})</span>
+                  {(() => {
+                    const reviewData = getProductReview(product.id.toString());
+                    return reviewData ? (
+                      <ReviewSummary 
+                        rating={reviewData.averageRating} 
+                        reviewCount={reviewData.totalReviews} 
+                        size="sm" 
+                      />
+                    ) : (
+                      <div className="flex items-center gap-1">
+                        <Star className="h-3 w-3 text-gray-300" />
+                        <span className="text-xs text-gray-500">Sem avaliações</span>
+                      </div>
+                    );
+                  })()}
                 </div>
                 
                 {/* Price */}

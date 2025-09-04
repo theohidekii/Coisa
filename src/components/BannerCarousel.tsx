@@ -57,7 +57,7 @@ const BannerCarousel = () => {
   };
 
   return (
-    <section className="relative w-full h-[400px] overflow-hidden">
+    <section className="relative w-full h-[300px] md:h-[400px] overflow-hidden">
       {/* Banner Slides */}
       <div className="relative w-full h-full">
         {banners.map((banner, index) => (
@@ -68,22 +68,22 @@ const BannerCarousel = () => {
             }`}
           >
             <div className={`w-full h-full ${banner.bgColor} flex items-center`}>
-              <div className="container mx-auto px-4">
+              <div className="container mx-auto px-4 md:px-6">
                 <div className="max-w-3xl text-white">
-                  <div className="inline-block bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                    <span className="text-sm font-medium">Líder em Materiais de Construção</span>
+                  <div className="inline-block bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 mb-4 md:mb-6">
+                    <span className="text-xs md:text-sm font-medium">Líder em Materiais de Construção</span>
                   </div>
-                  <h1 className="text-5xl font-bold mb-4">
+                  <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">
                     <span className="text-gray-200">{banner.title}</span>
                     <br />
                     <span className="text-white">{banner.subtitle}</span>
                   </h1>
-                  <p className="text-xl mb-8 text-gray-100 max-w-2xl">
+                  <p className="text-sm md:text-lg lg:text-xl mb-6 md:mb-8 text-gray-100 max-w-2xl">
                     {banner.description}
                   </p>
                   <Button 
                     size="lg" 
-                    className="bg-white text-gray-900 hover:bg-gray-100 text-lg px-8 py-3"
+                    className="bg-white text-gray-900 hover:bg-gray-100 text-sm md:text-lg px-6 md:px-8 py-2 md:py-3"
                     onClick={() => window.location.href = banner.buttonLink}
                   >
                     {banner.buttonText}
@@ -99,27 +99,27 @@ const BannerCarousel = () => {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute left-6 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
+        className="absolute left-2 md:left-6 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm h-8 w-8 md:h-10 md:w-10"
         onClick={prevSlide}
       >
-        <ChevronLeft className="h-8 w-8" />
+        <ChevronLeft className="h-5 w-5 md:h-8 md:w-8" />
       </Button>
       
       <Button
         variant="ghost"
         size="icon"
-        className="absolute right-6 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm"
+        className="absolute right-2 md:right-6 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm h-8 w-8 md:h-10 md:w-10"
         onClick={nextSlide}
       >
-        <ChevronRight className="h-8 w-8" />
+        <ChevronRight className="h-5 w-5 md:h-8 md:w-8" />
       </Button>
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
+      <div className="absolute bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 md:space-x-3">
         {banners.map((_, index) => (
           <button
             key={index}
-            className={`w-4 h-4 rounded-full transition-all duration-300 ${
+            className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 ${
               index === currentSlide
                 ? "bg-white scale-125"
                 : "bg-white/50 hover:bg-white/75"

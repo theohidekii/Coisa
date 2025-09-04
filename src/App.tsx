@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "@/context/UserContext";
 import { CartProvider } from "@/context/CartContext";
+import BottomNavigation from "@/components/BottomNavigation";
 import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -17,6 +18,13 @@ import Produtos from "./pages/Produtos";
 import ProdutoDetalhe from "./pages/ProdutoDetalhe";
 import WishlistPage from "./pages/WishlistPage";
 import Assistencia from "./pages/Assistencia";
+import Entrega from "./pages/Entrega";
+import PosVenda from "./pages/PosVenda";
+import SobreNos from "./pages/SobreNos";
+import Ofertas from "./pages/Ofertas";
+import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
+import TermosDeUso from "./pages/TermosDeUso";
+import FAQ from "./pages/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -39,10 +47,18 @@ const App = () => (
               <Route path="/produtos" element={<Produtos />} />
               <Route path="/produto/:id" element={<ProdutoDetalhe />} />
               <Route path="/assistencia" element={<Assistencia />} />
+              <Route path="/entrega" element={<Entrega />} />
+              <Route path="/pos-venda" element={<PosVenda />} />
+              <Route path="/sobre-nos" element={<SobreNos />} />
+              <Route path="/ofertas" element={<Ofertas />} />
+              <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
+              <Route path="/termos-de-uso" element={<TermosDeUso />} />
+              <Route path="/faq" element={<FAQ />} />
               <Route path="/desejos" element={<WishlistPage />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <BottomNavigation />
           </BrowserRouter>
         </CartProvider>
       </UserProvider>

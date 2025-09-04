@@ -267,16 +267,16 @@ const Produtos = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 md:px-6 py-6 md:py-8">
         {/* Header da página */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Produtos</h1>
-          <p className="text-slate-600">Encontre os melhores materiais de construção</p>
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Produtos</h1>
+          <p className="text-sm md:text-base text-slate-600">Encontre os melhores materiais de construção</p>
         </div>
 
         {/* Filtros e busca */}
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 md:p-6 mb-6 md:mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
             {/* Busca */}
             <div className="md:col-span-2">
               <div className="relative">
@@ -285,7 +285,7 @@ const Produtos = () => {
                   placeholder="Buscar produtos..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 text-sm md:text-base"
                 />
               </div>
             </div>
@@ -295,7 +295,7 @@ const Produtos = () => {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base"
               >
                 <option value="">Todas as categorias</option>
                 {categories.map((category) => (
@@ -311,7 +311,7 @@ const Produtos = () => {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm md:text-base"
               >
                 <option value="name">Nome A-Z</option>
                 <option value="price">Menor preço</option>
@@ -322,9 +322,9 @@ const Produtos = () => {
           </div>
 
           {/* Controles de visualização */}
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-200">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 pt-4 border-t border-slate-200 space-y-3 sm:space-y-0">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-600">
+              <span className="text-xs md:text-sm text-slate-600">
                 {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
               </span>
               {selectedCategory && (
@@ -335,11 +335,12 @@ const Produtos = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-sm text-slate-600">Visualizar:</span>
+              <span className="text-xs md:text-sm text-slate-600">Visualizar:</span>
               <Button
                 variant={viewMode === "grid" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("grid")}
+                className="h-8 w-8 md:h-9 md:w-9 p-0"
               >
                 <Grid3X3 className="h-4 w-4" />
               </Button>
@@ -347,6 +348,7 @@ const Produtos = () => {
                 variant={viewMode === "list" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("list")}
+                className="h-8 w-8 md:h-9 md:w-9 p-0"
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -354,26 +356,26 @@ const Produtos = () => {
           </div>
         </div>
 
-        {/* Lista de produtos */}
+                {/* Lista de produtos */}
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Search className="h-12 w-12 text-slate-400" />
+          <div className="text-center py-12 md:py-16">
+            <div className="w-20 h-20 md:w-24 md:h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+              <Search className="h-10 w-10 md:h-12 md:w-12 text-slate-400" />
             </div>
-            <h2 className="text-2xl font-semibold text-slate-900 mb-4">Nenhum produto encontrado</h2>
-            <p className="text-slate-600 mb-8">Tente ajustar os filtros ou termos de busca</p>
+            <h2 className="text-xl md:text-2xl font-semibold text-slate-900 mb-3 md:mb-4">Nenhum produto encontrado</h2>
+            <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8">Tente ajustar os filtros ou termos de busca</p>
             <Button
               onClick={() => {
                 setSearchTerm("");
                 setSelectedCategory("");
               }}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-base"
             >
               Limpar Filtros
             </Button>
           </div>
         ) : (
-          <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" : "space-y-4"}>
+          <div className={viewMode === "grid" ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6" : "space-y-3 md:space-y-4"}>
             {filteredProducts.map((product) => (
               <Card key={product.id} className="group hover:shadow-lg transition-all duration-300 border-0 shadow-sm">
                 <CardContent className="p-0">
@@ -402,67 +404,67 @@ const Produtos = () => {
 
                       {/* Botões de ação */}
                       <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-                          <Heart className="h-4 w-4" />
+                        <Button size="sm" variant="secondary" className="h-7 w-7 md:h-8 md:w-8 p-0">
+                          <Heart className="h-3 w-3 md:h-4 md:w-4" />
                         </Button>
-                        <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-                          <Eye className="h-4 w-4" />
+                        <Button size="sm" variant="secondary" className="h-7 w-7 md:h-8 md:w-8 p-0">
+                          <Eye className="h-3 w-3 md:h-4 md:w-4" />
                         </Button>
                       </div>
                     </div>
 
-                                         {/* Informações do produto */}
-                     <div className={`p-4 ${viewMode === "list" ? "flex-1" : ""}`}>
-                       <div className="mb-2">
-                         <Badge variant="outline" className="text-xs mb-2">
-                           {product.category}
-                         </Badge>
-                         <Link to={`/produto/${product.id}`}>
-                           <h3 className="font-semibold text-slate-900 mb-1 line-clamp-2 hover:text-blue-600 transition-colors">
-                             {product.name}
-                           </h3>
-                         </Link>
-                       </div>
+                    {/* Informações do produto */}
+                    <div className={`p-3 md:p-4 ${viewMode === "list" ? "flex-1" : ""}`}>
+                      <div className="mb-2">
+                        <Badge variant="outline" className="text-xs mb-2">
+                          {product.category}
+                        </Badge>
+                        <Link to={`/produto/${product.id}`}>
+                          <h3 className="font-semibold text-slate-900 mb-1 line-clamp-2 hover:text-blue-600 transition-colors text-sm md:text-base">
+                            {product.name}
+                          </h3>
+                        </Link>
+                      </div>
 
                       {/* Avaliação */}
                       <div className="flex items-center gap-1 mb-2">
                         {renderStars(product.rating)}
-                        <span className="text-sm text-slate-600">({product.reviews})</span>
+                        <span className="text-xs md:text-sm text-slate-600">({product.reviews})</span>
                       </div>
 
                       {/* Preço */}
                       <div className="mb-3">
                         {product.originalPrice ? (
                           <div className="flex items-center gap-2">
-                            <span className="text-lg font-bold text-blue-600">
+                            <span className="text-base md:text-lg font-bold text-blue-600">
                               {formatPrice(product.price)}
                             </span>
-                            <span className="text-sm text-slate-500 line-through">
+                            <span className="text-xs md:text-sm text-slate-500 line-through">
                               {formatPrice(product.originalPrice)}
                             </span>
                           </div>
                         ) : (
-                          <span className="text-lg font-bold text-blue-600">
+                          <span className="text-base md:text-lg font-bold text-blue-600">
                             {formatPrice(product.price)}
                           </span>
                         )}
                       </div>
 
-                                             {/* Botão de adicionar ao carrinho */}
-                       <div className="flex gap-2">
-                         <Button 
-                           className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
-                           disabled={!product.inStock}
-                         >
-                           <ShoppingCart className="h-4 w-4 mr-2" />
-                           {product.inStock ? "Adicionar ao Carrinho" : "Indisponível"}
-                         </Button>
-                         <Link to={`/produto/${product.id}`}>
-                           <Button variant="outline" size="sm">
-                             <Eye className="h-4 w-4" />
-                           </Button>
-                         </Link>
-                       </div>
+                      {/* Botão de adicionar ao carrinho */}
+                      <div className="flex gap-2">
+                        <Button 
+                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs md:text-sm"
+                          disabled={!product.inStock}
+                        >
+                          <ShoppingCart className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                          {product.inStock ? "Adicionar ao Carrinho" : "Indisponível"}
+                        </Button>
+                        <Link to={`/produto/${product.id}`}>
+                          <Button variant="outline" size="sm" className="h-8 w-8 md:h-9 md:w-9 p-0">
+                            <Eye className="h-3 w-3 md:h-4 md:w-4" />
+                          </Button>
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

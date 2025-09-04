@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { calculateDistance, calculateShippingCost, getEstimatedDelivery, STORE_CEP } from "@/utils/distanceCalculator";
+import { useCart } from "@/context/CartContext";
 
 interface CartItem {
   id: number;
@@ -19,35 +21,13 @@ interface CartItem {
 }
 
 const Carrinho = () => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "Cimento Portland CP-II",
-      price: 25.90,
-      image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop",
-      quantity: 2,
-      category: "Cimentos",
-      weight: 50
-    },
-    {
-      id: 2,
-      name: "Tijolo Cerâmico 6 Furos",
-      price: 0.85,
-      image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop",
-      quantity: 100,
-      category: "Tijolos",
-      weight: 2.5
-    },
-    {
-      id: 3,
-      name: "Areia Média Lavada",
-      price: 45.00,
-      image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=400&h=300&fit=crop",
-      quantity: 1,
-      category: "Areias",
-      weight: 50
-    }
-  ]);
+  const { cartItems, updateQuantity, removeFromCart, getCartTotal } = useCart();
+  const [cep, setCep] = useState("");
+  const [shippingCost, setShippingCost] = useState(0);
+  const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
+  const [shippingInfo, setShippingInfo] = useState<any>(null);
+  const [addressInfo, setAddressInfo] = useState<any>(null);
+  const [isLoadingAddress, setIsLoadingAddress] = useState(false);
 
   const [cep, setCep] = useState("");
   const [shippingCost, setShippingCost] = useState(0);
@@ -56,25 +36,14 @@ const Carrinho = () => {
   const [addressInfo, setAddressInfo] = useState<any>(null);
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
 
-  const updateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeItem(id);
-      return;
-    }
-    
-    setCartItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
-
-  const removeItem = (id: number) => {
-    setCartItems(prev => prev.filter(item => item.id !== id));
-  };
-
   const calculateSubtotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return getCartTotal();
+  };
+
+  const calculateTotal = () => {
+    const subtotal = calculateSubtotal();
+    // O frete não é adicionado ao total, apenas informativo
+    return subtotal;
   };
 
   const calculateTotal = () => {
@@ -89,83 +58,37 @@ const Carrinho = () => {
     setIsCalculatingShipping(true);
     try {
       // Cálculo de frete baseado no modelo fornecido
-      const totalWeight = cartItems.reduce((sum, item) => sum + (item.weight * item.quantity), 0);
+      const totalWeight = cartItems.reduce((sum, item) => sum + (item.weight || 1 * item.quantity), 0);
       const subtotal = calculateSubtotal();
       
-      // Cálculo de distância baseado no CEP
-      const storeCep = "09130-410"; // CEP da loja COISA
-      const distance = calculateDistance(storeCep, cepValue);
+      // Cálculo de distância usando o novo utilitário
+      const distance = calculateDistance(STORE_CEP, cepValue);
       
-      // Taxa base
-      let cost = 7.90;
+      // Calcular custo do frete
+      const freeShipping = subtotal >= 150;
+      const shippingCost = calculateShippingCost(distance, totalWeight, freeShipping);
       
-      // Adicional por distância (acima de 5km)
-      if (distance > 5) {
-        cost += (distance - 5) * 1.20;
-      }
-      
-      // Adicional por peso
-      if (totalWeight > 1) {
-        if (totalWeight <= 5) {
-          cost += 5.00;
-        } else if (totalWeight <= 10) {
-          cost += 10.00;
-        } else {
-          cost += 15.00; // Para pesos acima de 10kg
-        }
-      }
-      
-      // Frete grátis para compras acima de R$ 150
-      if (subtotal >= 150) {
-        cost = 0;
-      }
+      // Tempo estimado de entrega
+      const estimatedDelivery = getEstimatedDelivery(distance);
       
       console.log('Cálculo de frete:', {
         cep: cepValue,
         distance,
         totalWeight,
         subtotal,
-        cost,
-        freeShipping: subtotal >= 150
+        shippingCost,
+        freeShipping
       });
       
-      setShippingCost(cost);
+      setShippingCost(shippingCost);
       setShippingInfo({
         distance,
-        estimatedDelivery: distance <= 10 ? "1-2 dias úteis" : "2-3 dias úteis"
+        estimatedDelivery
       });
     } catch (error) {
       console.error("Erro ao calcular frete:", error);
     } finally {
       setIsCalculatingShipping(false);
-    }
-  };
-
-  const calculateDistance = (cepOrigin: string, cepDest: string): number => {
-    // Cálculo de distância baseado em CEPs
-    // CEP da loja: 09130-410 (Santo André - SP)
-    const cepNumbers = {
-      origin: parseInt(cepOrigin.replace("-", "")),
-      dest: parseInt(cepDest.replace("-", ""))
-    };
-    
-    // Cálculo mais preciso baseado na diferença dos CEPs
-    const difference = Math.abs(cepNumbers.origin - cepNumbers.dest);
-    
-    // Mapeamento específico para CEPs da Grande São Paulo
-    // Baseado na localização da loja em Santo André (09130-410)
-    
-    // Para CEPs da Grande São Paulo (mais preciso)
-    if (difference < 1000) {
-      return Math.max(1, Math.floor(difference / 100)); // 1-10 km
-    } else if (difference < 5000) {
-      return Math.max(3, Math.floor(difference / 200)); // 3-25 km
-    } else if (difference < 20000) {
-      return Math.max(8, Math.floor(difference / 500)); // 8-40 km
-    } else if (difference < 50000) {
-      return Math.max(15, Math.floor(difference / 1000)); // 15-50 km
-    } else {
-      return Math.max(25, Math.floor(difference / 2000)); // 25+ km
     }
   };
 
@@ -230,44 +153,44 @@ const Carrinho = () => {
         </div>
       </div>
 
-      <main className="container mx-auto px-6 py-12">
+      <main className="container mx-auto px-4 md:px-6 py-8 md:py-12">
         <div className="max-w-6xl mx-auto">
           {/* Page Header */}
-          <div className="text-center mb-12">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ShoppingCart className="h-10 w-10 text-white" />
+          <div className="text-center mb-8 md:mb-12">
+            <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+              <ShoppingCart className="h-8 w-8 md:h-10 md:w-10 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">Carrinho de Compras</h1>
-            <p className="text-slate-600">Revise seus itens antes de finalizar a compra</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-2">Carrinho de Compras</h1>
+            <p className="text-sm md:text-base text-slate-600">Revise seus itens antes de finalizar a compra</p>
           </div>
 
           {cartItems.length === 0 ? (
             /* Empty Cart */
-            <div className="text-center py-16">
-              <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <ShoppingCart className="h-12 w-12 text-slate-400" />
+            <div className="text-center py-12 md:py-16">
+              <div className="w-20 h-20 md:w-24 md:h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+                <ShoppingCart className="h-10 w-10 md:h-12 md:w-12 text-slate-400" />
               </div>
-              <h2 className="text-2xl font-semibold text-slate-900 mb-4">Seu carrinho está vazio</h2>
-              <p className="text-slate-600 mb-8">Adicione alguns produtos para começar suas compras</p>
+              <h2 className="text-xl md:text-2xl font-semibold text-slate-900 mb-3 md:mb-4">Seu carrinho está vazio</h2>
+              <p className="text-sm md:text-base text-slate-600 mb-6 md:mb-8">Adicione alguns produtos para começar suas compras</p>
               <Link to="/">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 md:px-8 py-2 md:py-3 rounded-lg text-sm md:text-base">
                   Continuar Comprando
                 </Button>
               </Link>
             </div>
           ) : (
             /* Cart Content */
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
               {/* Cart Items */}
-              <div className="lg:col-span-2 space-y-6">
-                <h2 className="text-xl font-semibold text-slate-900 mb-6">Itens no Carrinho ({cartItems.length})</h2>
+              <div className="lg:col-span-2 space-y-4 md:space-y-6">
+                <h2 className="text-lg md:text-xl font-semibold text-slate-900 mb-4 md:mb-6">Itens no Carrinho ({cartItems.length})</h2>
                 
                 {cartItems.map((item) => (
                   <Card key={item.id} className="border-0 shadow-sm bg-white rounded-xl overflow-hidden">
-                    <CardContent className="p-6">
-                      <div className="flex items-center space-x-4">
+                    <CardContent className="p-4 md:p-6">
+                      <div className="flex flex-col md:flex-row items-start md:items-center space-y-3 md:space-y-0 md:space-x-4">
                         {/* Product Image */}
-                        <div className="w-20 h-20 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
+                        <div className="w-16 h-16 md:w-20 md:h-20 bg-slate-100 rounded-lg overflow-hidden flex-shrink-0">
                           <img 
                             src={item.image} 
                             alt={item.name}
@@ -277,49 +200,49 @@ const Carrinho = () => {
 
                         {/* Product Info */}
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-lg font-semibold text-slate-900 mb-1">{item.name}</h3>
-                          <p className="text-sm text-slate-500 mb-2">{item.category}</p>
-                          <p className="text-xl font-bold text-blue-600">{formatPrice(item.price)}</p>
+                          <h3 className="text-base md:text-lg font-semibold text-slate-900 mb-1">{item.name}</h3>
+                          <p className="text-xs md:text-sm text-slate-500 mb-2">{item.category}</p>
+                          <p className="text-lg md:text-xl font-bold text-blue-600">{formatPrice(item.price)}</p>
                         </div>
 
                         {/* Quantity Controls */}
-                        <div className="flex items-center space-x-3">
+                        <div className="flex items-center space-x-2 md:space-x-3">
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="w-8 h-8 p-0 border-slate-300 hover:bg-slate-50"
+                            onClick={() => updateQuantity(item.id.toString(), item.quantity - 1)}
+                            className="w-7 h-7 md:w-8 md:h-8 p-0 border-slate-300 hover:bg-slate-50"
                           >
-                            <Minus className="h-4 w-4" />
+                            <Minus className="h-3 w-3 md:h-4 md:w-4" />
                           </Button>
                           
-                          <span className="text-lg font-semibold text-slate-900 min-w-[2rem] text-center">
+                          <span className="text-base md:text-lg font-semibold text-slate-900 min-w-[2rem] text-center">
                             {item.quantity}
                           </span>
                           
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="w-8 h-8 p-0 border-slate-300 hover:bg-slate-50"
+                            onClick={() => updateQuantity(item.id.toString(), item.quantity + 1)}
+                            className="w-7 h-7 md:w-8 md:h-8 p-0 border-slate-300 hover:bg-slate-50"
                           >
-                            <Plus className="h-4 w-4" />
+                            <Plus className="h-3 w-3 md:h-4 md:w-4" />
                           </Button>
                         </div>
 
                         {/* Item Total */}
                         <div className="text-right">
-                          <p className="text-lg font-bold text-slate-900">{formatPrice(item.price * item.quantity)}</p>
+                          <p className="text-base md:text-lg font-bold text-slate-900">{formatPrice(item.price * item.quantity)}</p>
                         </div>
 
                         {/* Remove Button */}
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeFromCart(item.id.toString())}
                           className="text-red-500 hover:text-red-700 hover:bg-red-50"
                         >
-                          <Trash2 className="h-5 w-5" />
+                          <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
                         </Button>
                       </div>
                     </CardContent>
@@ -331,17 +254,17 @@ const Carrinho = () => {
               <div className="lg:col-span-1">
                 <Card className="border-0 shadow-lg bg-white rounded-2xl overflow-hidden sticky top-6">
                   <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100">
-                    <CardTitle className="flex items-center space-x-3 text-slate-800">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                        <ShoppingCart className="h-5 w-5 text-white" />
+                    <CardTitle className="flex items-center space-x-2 md:space-x-3 text-slate-800">
+                      <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <ShoppingCart className="h-4 w-4 md:h-5 md:w-5 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-slate-900">Resumo do Pedido</h3>
-                        <p className="text-slate-600 text-sm">Confirme seus itens</p>
+                        <h3 className="text-lg md:text-xl font-bold text-slate-900">Resumo do Pedido</h3>
+                        <p className="text-xs md:text-sm text-slate-600">Confirme seus itens</p>
                       </div>
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-6">
+                  <CardContent className="p-4 md:p-6">
                     {/* Summary Details */}
                     <div className="space-y-4 mb-6">
                       <div className="flex justify-between items-center">
@@ -353,9 +276,9 @@ const Carrinho = () => {
                       <div className="border-t border-slate-200 pt-4">
                         <div className="flex items-center gap-2 mb-3">
                           <MapPin className="h-4 w-4 text-slate-600" />
-                          <span className="text-sm font-medium text-slate-700">Calcular Frete</span>
+                          <span className="text-xs md:text-sm font-medium text-slate-700">Calcular Frete</span>
                         </div>
-                        <div className="flex gap-2 mb-3">
+                        <div className="flex flex-col sm:flex-row gap-2 mb-3">
                           <Input
                             placeholder="CEP"
                             value={cep}
@@ -367,6 +290,7 @@ const Carrinho = () => {
                             size="sm"
                             onClick={() => calculateShipping(cep)}
                             disabled={cep.length !== 8 || isCalculatingShipping}
+                            className="bg-blue-600 hover:bg-blue-700 text-white text-sm"
                           >
                             {isCalculatingShipping ? "..." : "OK"}
                           </Button>
@@ -449,22 +373,22 @@ const Carrinho = () => {
                     {/* Action Buttons */}
                     <div className="space-y-3">
                       <Link to="/checkout">
-                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold">
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 md:py-3 rounded-xl font-semibold text-sm md:text-base">
                           Finalizar Compra
                         </Button>
                       </Link>
                       
                       <Link to="/">
-                        <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 py-3 rounded-xl transition-colors">
+                        <Button variant="outline" className="w-full border-slate-300 text-slate-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 py-2 md:py-3 rounded-xl transition-colors text-sm md:text-base">
                           Continuar Comprando
                         </Button>
                       </Link>
                     </div>
 
                     {/* Additional Info */}
-                    <div className="mt-6 p-4 bg-slate-50 rounded-lg">
-                      <h4 className="font-semibold text-slate-900 mb-2">Informações Importantes</h4>
-                      <ul className="text-sm text-slate-600 space-y-1">
+                    <div className="mt-4 md:mt-6 p-3 md:p-4 bg-slate-50 rounded-lg">
+                      <h4 className="font-semibold text-slate-900 mb-2 text-sm md:text-base">Informações Importantes</h4>
+                      <ul className="text-xs md:text-sm text-slate-600 space-y-1">
                         <li>• Frete grátis para compras acima de R$ 100</li>
                         <li>• Entrega em até 3 dias úteis</li>
                         <li>• Pagamento seguro</li>

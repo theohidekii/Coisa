@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
+import { calculateDistance, calculateShippingCost, getEstimatedDelivery, STORE_CEP } from "@/utils/distanceCalculator";
 
 interface CartItem {
   id: number;
@@ -98,17 +99,10 @@ const CheckoutPage = () => {
     
     setIsCalculatingShipping(true);
     try {
-      // Cálculo de frete baseado no modelo fornecido
-      const storeCep = "09130-410"; // CEP da loja COISA
-      const distance = calculateDistance(storeCep, cepValue);
-      const baseRate = 7.90;
-      const distanceCost = distance > 5 ? (distance - 5) * 1.20 : 0;
-      const weightCost = totalWeight > 1 ? (totalWeight <= 5 ? 5.00 : 10.00) : 0;
-      
-      let finalShippingCost = baseRate + distanceCost + weightCost;
-      if (freeShipping) {
-        finalShippingCost = 0;
-      }
+      // Cálculo de frete usando o novo utilitário
+      const distance = calculateDistance(STORE_CEP, cepValue);
+      const shippingCost = calculateShippingCost(distance, totalWeight, freeShipping);
+      const estimatedDelivery = getEstimatedDelivery(distance);
 
       setShippingInfo({
         cep: cepValue,
@@ -117,41 +111,13 @@ const CheckoutPage = () => {
         state: "SP",
         neighborhood: "Centro",
         distance,
-        shippingCost: finalShippingCost,
-        estimatedDelivery: distance <= 10 ? "1-2 dias úteis" : "2-3 dias úteis"
+        shippingCost,
+        estimatedDelivery
       });
     } catch (error) {
       console.error("Erro ao calcular frete:", error);
     } finally {
       setIsCalculatingShipping(false);
-    }
-  };
-
-  const calculateDistance = (cepOrigin: string, cepDest: string): number => {
-    // Cálculo de distância baseado em CEPs
-    // CEP da loja: 09130-410 (Santo André - SP)
-    const cepNumbers = {
-      origin: parseInt(cepOrigin.replace("-", "")),
-      dest: parseInt(cepDest.replace("-", ""))
-    };
-    
-    // Cálculo mais preciso baseado na diferença dos CEPs
-    const difference = Math.abs(cepNumbers.origin - cepNumbers.dest);
-    
-    // Mapeamento específico para CEPs da Grande São Paulo
-    // Baseado na localização da loja em Santo André (09130-410)
-    
-    // Para CEPs da Grande São Paulo (mais preciso)
-    if (difference < 1000) {
-      return Math.max(1, Math.floor(difference / 100)); // 1-10 km
-    } else if (difference < 5000) {
-      return Math.max(3, Math.floor(difference / 200)); // 3-25 km
-    } else if (difference < 20000) {
-      return Math.max(8, Math.floor(difference / 500)); // 8-40 km
-    } else if (difference < 50000) {
-      return Math.max(15, Math.floor(difference / 1000)); // 15-50 km
-    } else {
-      return Math.max(25, Math.floor(difference / 2000)); // 25+ km
     }
   };
 
