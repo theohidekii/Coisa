@@ -22,7 +22,8 @@ import {
   Edit,
   Clock,
   Shield,
-  Calendar
+  Calendar,
+  Store
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
@@ -134,7 +135,7 @@ const CheckoutPage = () => {
       description: "Entrega em 1 - 2 dias úteis",
       cost: shippingCost + 15,
       estimatedDays: "1 - 2 dias úteis",
-      icon: <Clock className="h-5 w-5" />
+      icon: <Package className="h-5 w-5" />
     },
     {
       id: "pickup",
@@ -142,7 +143,7 @@ const CheckoutPage = () => {
       description: "Retire seu pedido em nossa loja física",
       cost: 0,
       estimatedDays: "Mesmo dia (após confirmação)",
-      icon: <Package className="h-5 w-5" />
+      icon: <Store className="h-5 w-5" />
     }
   ];
 
@@ -345,13 +346,13 @@ const CheckoutPage = () => {
                       isCurrent
                         ? 'bg-blue-600 text-white shadow-lg scale-105'
                         : isCompleted
-                        ? 'bg-green-50 text-green-700 hover:bg-green-100 border-2 border-green-200'
+                        ? 'bg-blue-50 text-blue-700 hover:bg-blue-100 border-2 border-blue-200'
                         : 'bg-gray-50 text-gray-400 cursor-not-allowed'
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                       isCurrent ? 'bg-white text-blue-600' : 
-                      isCompleted ? 'bg-green-600 text-white' : 
+                      isCompleted ? 'bg-blue-600 text-white' : 
                       'bg-gray-300 text-gray-500'
                     }`}>
                       {isCompleted ? (
@@ -370,7 +371,7 @@ const CheckoutPage = () => {
                   <div className={`w-96 h-2 mx-8 rounded-full transition-all duration-300 ${
                     isCompleted
                       ? index === 0 && currentStep === 'shipping'
-                        ? 'bg-green-600 shadow-lg' 
+                        ? 'bg-blue-600 shadow-lg' 
                         : 'bg-blue-600 shadow-lg'
                       : 'bg-gray-300'
                   }`} />
@@ -441,7 +442,7 @@ const CheckoutPage = () => {
                             className="bg-gray-50 border-gray-200 text-gray-700 font-medium"
                           />
                           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                            <CheckCircle className="h-5 w-5 text-green-500" />
+                            <CheckCircle className="h-5 w-5 text-blue-500" />
                           </div>
                         </div>
                       </div>
@@ -454,7 +455,7 @@ const CheckoutPage = () => {
                             className="bg-gray-50 border-gray-200 text-gray-700 font-medium"
                           />
                           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                            <CheckCircle className="h-5 w-5 text-green-500" />
+                            <CheckCircle className="h-5 w-5 text-blue-500" />
                           </div>
                         </div>
                       </div>
@@ -467,7 +468,7 @@ const CheckoutPage = () => {
                             className="bg-gray-50 border-gray-200 text-gray-700 font-medium"
                           />
                           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                            <CheckCircle className="h-5 w-5 text-green-500" />
+                            <CheckCircle className="h-5 w-5 text-blue-500" />
                           </div>
                         </div>
                       </div>
@@ -480,7 +481,7 @@ const CheckoutPage = () => {
                             className="bg-gray-50 border-gray-200 text-gray-700 font-medium"
                           />
                           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                            <CheckCircle className="h-5 w-5 text-green-500" />
+                            <CheckCircle className="h-5 w-5 text-blue-500" />
                           </div>
                         </div>
                       </div>
@@ -488,10 +489,10 @@ const CheckoutPage = () => {
                     
                     <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-xl">
                       <div className="flex items-center gap-3">
-                        <Shield className="h-6 w-6 text-green-600" />
+                        <Shield className="h-6 w-6 text-blue-600" />
                         <div>
-                          <h4 className="font-semibold text-green-800">Informações verificadas</h4>
-                          <p className="text-sm text-green-700">Todos os seus dados estão corretos e seguros</p>
+                          <h4 className="font-semibold text-blue-800">Informações verificadas</h4>
+                          <p className="text-sm text-blue-700">Todos os seus dados estão corretos e seguros</p>
                         </div>
                       </div>
                     </div>
@@ -513,9 +514,9 @@ const CheckoutPage = () => {
               {/* Etapa 2: Endereço de Entrega */}
               {currentStep === 'address' && (
                 <Card className="border-0 shadow-lg">
-                  <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-t-xl">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
                     <CardTitle className="flex items-center gap-3 text-xl">
-                      <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                         <MapPin className="h-5 w-5 text-white" />
                       </div>
                       <div>
@@ -546,7 +547,7 @@ const CheckoutPage = () => {
                                 <div className="flex-1">
                                   <div className="flex items-center gap-3 mb-3">
                                     <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                                      selectedAddressId === address.id ? 'bg-green-600' : 'bg-gray-200'
+                                      selectedAddressId === address.id ? 'bg-blue-600' : 'bg-gray-200'
                                     }`}>
                                       {selectedAddressId === address.id && (
                                         <CheckCircle className="h-4 w-4 text-white" />
@@ -616,7 +617,7 @@ const CheckoutPage = () => {
                         <Button
                           variant="outline"
                           onClick={() => setShowNewAddressForm(true)}
-                          className="border-2 border-dashed border-gray-300 hover:border-green-500 hover:bg-green-50 text-gray-600 hover:text-green-700 py-6 px-8 rounded-xl text-lg font-medium"
+                          className="border-2 border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50 text-gray-600 hover:text-blue-700 py-6 px-8 rounded-xl text-lg font-medium"
                         >
                           <Plus className="h-6 w-6 mr-3" />
                           Adicionar Novo Endereço
@@ -626,10 +627,10 @@ const CheckoutPage = () => {
                       <Card className="border-2 border-dashed border-green-300 bg-green-50">
                         <CardContent className="p-6">
                           <div className="flex items-center gap-3 mb-6">
-                            <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
                               <Plus className="h-4 w-4 text-white" />
                             </div>
-                            <h4 className="font-semibold text-lg text-green-800">Novo Endereço</h4>
+                            <h4 className="font-semibold text-lg text-blue-800">Novo Endereço</h4>
                           </div>
                           
                           {/* Busca por CEP */}
@@ -668,10 +669,10 @@ const CheckoutPage = () => {
                           {addressInfo && !isLoadingAddress && (
                             <div className="p-4 bg-green-100 border border-green-300 rounded-xl mb-6">
                               <div className="flex items-center gap-3 mb-2">
-                                <CheckCircle className="h-5 w-5 text-green-600" />
-                                <span className="font-semibold text-green-800">Endereço encontrado!</span>
+                                <CheckCircle className="h-5 w-5 text-blue-600" />
+                                <span className="font-semibold text-blue-800">Endereço encontrado!</span>
                               </div>
-                              <div className="text-green-700 font-medium">
+                              <div className="text-blue-700 font-medium">
                                 {addressInfo.logradouro}, {addressInfo.bairro}, {addressInfo.localidade} - {addressInfo.uf}
                               </div>
                             </div>
@@ -706,7 +707,7 @@ const CheckoutPage = () => {
                             <Button
                               onClick={handleSaveAddress}
                               disabled={!addressInfo || !newAddress.name || !newAddress.numero}
-                              className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 font-semibold rounded-xl"
+                              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 font-semibold rounded-xl"
                             >
                               <Save className="h-5 w-5 mr-2" />
                               Salvar Endereço
@@ -767,7 +768,7 @@ const CheckoutPage = () => {
                       <Button 
                         onClick={goToNextStep} 
                         disabled={!canProceedToNextStep()}
-                        className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
                       >
                         Continuar para Entrega
                         <ArrowRight className="h-5 w-5 ml-2" />
@@ -780,9 +781,9 @@ const CheckoutPage = () => {
               {/* Etapa 3: Método de Envio */}
               {currentStep === 'shipping' && (
                 <Card className="border-0 shadow-lg">
-                  <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-t-xl">
+                  <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
                     <CardTitle className="flex items-center gap-3 text-xl">
-                      <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                         <Truck className="h-5 w-5 text-white" />
                       </div>
                       <div>
@@ -800,7 +801,7 @@ const CheckoutPage = () => {
                           key={method.id}
                           className={`border-2 rounded-xl p-6 cursor-pointer transition-all hover:shadow-lg ${
                             selectedShippingMethod === method.id
-                              ? "border-purple-500 bg-purple-50 shadow-lg"
+                              ? "border-blue-500 bg-blue-50 shadow-lg"
                               : "border-gray-200 hover:border-gray-300 bg-white"
                           }`}
                           onClick={() => setSelectedShippingMethod(method.id)}
@@ -809,7 +810,7 @@ const CheckoutPage = () => {
                             <div className="flex items-center gap-4">
                               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                                 selectedShippingMethod === method.id
-                                  ? "bg-purple-600 text-white"
+                                  ? "bg-blue-600 text-white"
                                   : "bg-gray-100 text-gray-600"
                               }`}>
                                 {method.icon}
@@ -825,7 +826,7 @@ const CheckoutPage = () => {
                             </div>
                             <div className="text-right">
                               <div className={`text-2xl font-bold ${
-                                selectedShippingMethod === method.id ? 'text-purple-600' : 'text-gray-800'
+                                selectedShippingMethod === method.id ? 'text-blue-600' : 'text-gray-800'
                               }`}>
                                 {freeShipping ? (
                                   <div className="flex items-center gap-2">
@@ -847,11 +848,11 @@ const CheckoutPage = () => {
                           {/* Indicador de seleção */}
                           <div className="mt-4 flex items-center justify-between">
                             <div className={`flex items-center gap-2 ${
-                              selectedShippingMethod === method.id ? 'text-purple-600' : 'text-gray-400'
+                              selectedShippingMethod === method.id ? 'text-blue-600' : 'text-gray-400'
                             }`}>
                               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
                                 selectedShippingMethod === method.id 
-                                  ? 'border-purple-600 bg-purple-600' 
+                                  ? 'border-blue-600 bg-blue-600' 
                                   : 'border-gray-300'
                               }`}>
                                 {selectedShippingMethod === method.id && (
@@ -963,7 +964,7 @@ const CheckoutPage = () => {
               <Card className="border-0 shadow-lg sticky top-6">
                 <CardHeader className="bg-gradient-to-r from-slate-50 to-blue-50 rounded-t-xl">
                   <CardTitle className="flex items-center gap-3 text-xl">
-                    <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
                       <ShoppingCart className="h-5 w-5 text-white" />
                     </div>
                     <div>
@@ -1043,18 +1044,18 @@ const CheckoutPage = () => {
                     )}
 
                     {currentStep === 'shipping' && (
-                      <div className="p-4 bg-purple-50 border border-purple-200 rounded-xl">
+                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
                         <div className="flex items-center gap-3 mb-2">
-                          <Truck className="h-5 w-5 text-purple-600" />
-                          <span className="font-semibold text-purple-800">Etapa Atual: Método de Entrega</span>
+                          <Truck className="h-5 w-5 text-blue-600" />
+                          <span className="font-semibold text-blue-800">Etapa Atual: Método de Entrega</span>
                         </div>
                         {selectedShippingMethod ? (
                           <div>
-                            <p className="text-sm text-purple-700 mb-2">Método selecionado:</p>
+                            <p className="text-sm text-blue-700 mb-2">Método selecionado:</p>
                             {(() => {
                               const method = shippingMethods.find(m => m.id === selectedShippingMethod);
                               return method ? (
-                                <div className="text-sm text-purple-600 bg-white p-2 rounded border">
+                                <div className="text-sm text-blue-600 bg-white p-2 rounded border">
                                   <div className="font-medium">{method.name}</div>
                                   <div>{method.description}</div>
                                   <div className="text-xs text-gray-500">{method.estimatedDays}</div>
@@ -1063,7 +1064,7 @@ const CheckoutPage = () => {
                             })()}
                           </div>
                         ) : (
-                          <p className="text-sm text-purple-700">
+                          <p className="text-sm text-blue-700">
                             Escolha como deseja receber seu pedido
                           </p>
                         )}
@@ -1107,13 +1108,13 @@ const CheckoutPage = () => {
                       <Button 
                         className={`w-full py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all ${
                           canProceedToPayment() 
-                            ? "bg-purple-600 hover:bg-purple-700 text-white" 
+                            ? "bg-blue-600 hover:bg-blue-700 text-white" 
                             : "bg-gray-400 text-gray-200 cursor-not-allowed"
                         }`}
                         onClick={handleProceedToPayment}
                         disabled={!canProceedToPayment()}
                       >
-                        <Shield className="h-5 w-5 mr-2" />
+                        <CreditCard className="h-5 w-5 mr-2" />
                         {canProceedToPayment() ? "Finalizar Pedido" : "Complete as informações"}
                       </Button>
                     ) : (
