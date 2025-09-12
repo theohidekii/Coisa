@@ -17,7 +17,7 @@ const SobreNos = () => {
               Sobre Nós
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-8">
-              Mais de 25 anos de experiência em Santo André
+              Desde 1998 atendendo Santo André e região
             </p>
             <div className="flex items-center justify-center space-x-4">
               <div className="flex items-center space-x-2">
@@ -64,7 +64,7 @@ const SobreNos = () => {
                 </p>
                 
                 <p className="text-gray-600 leading-relaxed font-semibold">
-                  Mais que uma loja, somos seu parceiro em cada projeto. Venha nos visitar e descubra por que há mais de duas décadas somos sinônimo de confiança e variedade em Santo André.
+                  Mais que uma loja, somos seu parceiro em cada projeto. Venha nos visitar e descubra por que somos sinônimo de confiança e variedade em Santo André.
                 </p>
               </CardContent>
             </Card>
@@ -105,7 +105,7 @@ const SobreNos = () => {
                     </div>
                     <h3 className="font-semibold text-gray-900 mb-2">Confiança</h3>
                     <p className="text-sm text-gray-600">
-                      Mais de 25 anos de experiência no mercado
+                      Experiência consolidada no mercado
                     </p>
                   </div>
                 </div>
@@ -227,7 +227,7 @@ const SobreNos = () => {
               <CardContent className="p-8 text-center">
                 <h3 className="text-2xl font-bold mb-4">Venha nos Conhecer!</h3>
                 <p className="text-blue-100 mb-6">
-                  Descubra por que somos referência em Santo André há mais de 25 anos. 
+                  Descubra por que somos referência em Santo André desde 1998. 
                   Nossa equipe está pronta para ajudá-lo a encontrar a solução perfeita para seu projeto.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">

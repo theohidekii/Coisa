@@ -64,7 +64,7 @@ const Assistencia = () => {
               <ul className="space-y-1.5 md:space-y-2">
                 <li className="flex items-center text-xs md:text-sm text-gray-600">
                   <CheckCircle className="h-3 w-3 md:h-4 md:w-4 text-green-500 mr-2" />
-                  Diagnóstico gratuito
+                  Diagnóstico
                 </li>
                 <li className="flex items-center text-xs md:text-sm text-gray-600">
                   <CheckCircle className="h-3 w-3 md:h-4 md:w-4 text-green-500 mr-2" />

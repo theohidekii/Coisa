@@ -123,17 +123,17 @@ const CheckoutPage = () => {
     {
       id: "standard",
       name: "Entrega Padrão",
-      description: "Entrega em até 3 dias úteis",
+      description: "Entrega em 2 - 3 dias úteis",
       cost: shippingCost,
-      estimatedDays: shippingInfo?.estimatedDelivery || "3 dias úteis",
+      estimatedDays: shippingInfo?.estimatedDelivery || "2 - 3 dias úteis",
       icon: <Truck className="h-5 w-5" />
     },
     {
       id: "express",
       name: "Entrega Expressa",
-      description: "Entrega em até 1 dia útil",
+      description: "Entrega em 1 - 2 dias úteis",
       cost: shippingCost + 15,
-      estimatedDays: "1 dia útil",
+      estimatedDays: "1 - 2 dias úteis",
       icon: <Clock className="h-5 w-5" />
     },
     {
@@ -186,7 +186,6 @@ const CheckoutPage = () => {
   const calculateShipping = async (cepValue: string) => {
     if (cepValue.length !== 8) return;
     
-    console.log('🚚 Calculando frete para CEP (Google Maps):', cepValue);
     setIsCalculatingShipping(true);
     try {
       // Calcula frete usando Google Maps API
@@ -203,7 +202,6 @@ const CheckoutPage = () => {
         estimatedDelivery: `${freightBreakdown.estimatedDeliveryDays} dias úteis`
       };
 
-      console.log('📦 ShippingInfo calculado (Google Maps):', shippingData);
       setShippingInfo(shippingData);
     } catch (error) {
       console.error("Erro ao calcular frete:", error);
@@ -285,31 +283,15 @@ const CheckoutPage = () => {
 
   const canProceedToPayment = () => {
     // TESTE TEMPORÁRIO: Sempre retorna true para debug
-    console.log('🔍 TESTE: canProceedToPayment sempre retorna true');
     return true;
     
     // Para retirada na loja, não precisa de shippingInfo
     if (selectedShippingMethod === 'pickup') {
-      const result = userData && selectedAddressId && selectedShippingMethod;
-      console.log('🔍 Debug canProceedToPayment (pickup):', {
-        userData: !!userData,
-        selectedAddressId,
-        selectedShippingMethod,
-        result
-      });
-      return result;
+      return userData && selectedAddressId && selectedShippingMethod;
     }
     
     // Para outros métodos, precisa de shippingInfo
-    const result = userData && selectedAddressId && shippingInfo && selectedShippingMethod;
-    console.log('🔍 Debug canProceedToPayment (delivery):', {
-      userData: !!userData,
-      selectedAddressId,
-      shippingInfo: !!shippingInfo,
-      selectedShippingMethod,
-      result
-    });
-    return result;
+    return userData && selectedAddressId && shippingInfo && selectedShippingMethod;
   };
 
   const canProceedToNextStep = () => {
@@ -385,11 +367,12 @@ const CheckoutPage = () => {
                   </button>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`w-12 h-0.5 mx-4 ${
-                    completedSteps.includes(steps[index + 1].id as CheckoutStep) || 
-                    currentStep === steps[index + 1].id
-                      ? 'bg-blue-600' 
-                      : 'bg-gray-200'
+                  <div className={`w-96 h-2 mx-8 rounded-full transition-all duration-300 ${
+                    isCompleted
+                      ? index === 0 && currentStep === 'shipping'
+                        ? 'bg-green-600 shadow-lg' 
+                        : 'bg-blue-600 shadow-lg'
+                      : 'bg-gray-300'
                   }`} />
                 )}
               </div>
@@ -424,18 +407,6 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          {/* Debug Info Temporário */}
-          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <h4 className="font-semibold text-yellow-800 mb-2">🔍 Debug - Estado Atual:</h4>
-            <div className="text-sm text-yellow-700 space-y-1">
-              <p>• Etapa atual: <strong>{currentStep}</strong></p>
-              <p>• Endereço selecionado: <strong>{selectedAddressId || 'Nenhum'}</strong></p>
-              <p>• Método de envio: <strong>{selectedShippingMethod || 'Nenhum'}</strong></p>
-              <p>• Info de frete: <strong>{shippingInfo ? 'Calculada' : 'Não calculada'}</strong></p>
-              <p>• Dados do usuário: <strong>{userData ? 'Carregados' : 'Não carregados'}</strong></p>
-              <p>• Pode finalizar: <strong className={canProceedToPayment() ? 'text-green-600' : 'text-red-600'}>{canProceedToPayment() ? 'SIM ✅' : 'NÃO ❌'}</strong></p>
-            </div>
-          </div>
 
           {/* Navegação das etapas */}
           <StepNavigation />
@@ -972,7 +943,7 @@ const CheckoutPage = () => {
                     </div>
 
                     {/* Botões de navegação */}
-                    <div className="flex justify-between mt-8">
+                    <div className="flex justify-start mt-8">
                       <Button 
                         variant="outline" 
                         onClick={goToPreviousStep}
@@ -980,14 +951,6 @@ const CheckoutPage = () => {
                       >
                         <ArrowLeft className="h-5 w-5 mr-2" />
                         Voltar
-                      </Button>
-                      <Button 
-                        onClick={handleProceedToPayment} 
-                        disabled={!canProceedToPayment()}
-                        className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
-                      >
-                        Finalizar Pedido
-                        <ArrowRight className="h-5 w-5 ml-2" />
                       </Button>
                     </div>
                   </CardContent>

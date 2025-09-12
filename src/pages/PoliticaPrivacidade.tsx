@@ -51,7 +51,7 @@ const PoliticaPrivacidade = () => {
                   <strong>Última atualização:</strong> {new Date().toLocaleDateString('pt-BR')}
                 </p>
                                  <p className="text-gray-600">
-                   A <strong>Coisa</strong> ("nós", "nossa", "nosso") está comprometida em proteger e respeitar sua privacidade. Esta Política de Privacidade descreve como coletamos, usamos, armazenamos e protegemos suas informações pessoais em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018).
+                   A <strong>Coisa</strong> está comprometida em proteger e respeitar sua privacidade. Esta Política de Privacidade descreve como coletamos, usamos, armazenamos e protegemos suas informações pessoais em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018).
                  </p>
                 <p className="text-gray-600">
                   Ao utilizar nossos serviços, você concorda com a coleta e uso de informações de acordo com esta política.

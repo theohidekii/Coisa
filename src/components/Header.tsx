@@ -31,9 +31,7 @@ const Header = () => {
   const navigationItems = [
     { name: "Início", href: "/" },
     { name: "Produtos", href: "/produtos" },
-    { name: "Teste Carrinho", href: "/teste-carrinho" },
-    { name: "Teste Frete", href: "/teste-frete" },
-    { name: "Assistência Técnica", href: "/assistencia" },
+    { name: "Oficina", href: "/assistencia" },
     { name: "Contato", href: "#contato" },
   ];
 

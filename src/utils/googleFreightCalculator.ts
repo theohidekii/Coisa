@@ -101,7 +101,7 @@ async function geocodeAddress(address: string): Promise<{ lat: number; lng: numb
   }
 }
 
-function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number, multiplier = 1.3) {
+function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   const toRad = (v: number) => (v * Math.PI) / 180;
   const R = 6371; // raio da Terra em km
   const dLat = toRad(lat2 - lat1);
@@ -111,9 +111,16 @@ function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number, mul
     Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c;
+  
+  // Aplica multiplicador diferenciado baseado na distância
+  const multiplier = distance > 150 ? 1.22 : 1.3;
+  const adjustedDistance = distance * multiplier;
+  
+  console.log(`🔢 Google Maps - Multiplicador aplicado: ${multiplier}x (${distance.toFixed(1)}km -> ${adjustedDistance.toFixed(1)}km)`);
+  
   return { 
     straight: distance, 
-    adjusted: distance * multiplier 
+    adjusted: adjustedDistance 
   };
 }
 
@@ -146,11 +153,10 @@ export async function calculateFreight(customerCep: string, cart: CartItem[]): P
     const whCoords = await geocodeAddress(WAREHOUSE_CEP);
     const custCoords = await geocodeAddress(customerCep);
 
-    // 2) Cálculo de distância com multiplicador para rotas reais
+    // 2) Cálculo de distância com multiplicador diferenciado para rotas reais
     const { straight, adjusted } = haversineKm(
       whCoords.lat, whCoords.lng,
-      custCoords.lat, custCoords.lng,
-      1.3 // multiplicador para considerar rotas reais
+      custCoords.lat, custCoords.lng
     );
 
     // 3) Cálculo de pesos e valores
@@ -250,36 +256,148 @@ export async function calculateFreightForCart(
   }
 }
 
-// Sistema de fallback usando cálculo simples
+// Tabela de distâncias conhecidas por região/estado
+const DISTANCE_TABLE: { [key: string]: number } = {
+  // São Paulo - Região Metropolitana
+  "01": 40,   // São Paulo - Centro
+  "02": 45,   // São Paulo - Zona Norte
+  "03": 50,   // São Paulo - Zona Leste
+  "04": 35,   // São Paulo - Zona Sul
+  "05": 45,   // São Paulo - Zona Oeste
+  "06": 25,   // Osasco
+  "07": 30,   // Guarulhos
+  "08": 20,   // Franco da Rocha
+  "09": 15,   // Santo André (nossa região)
+  
+  // São Paulo - Interior
+  "11": 60,   // Santos
+  "12": 150,  // São José dos Campos
+  "13": 70,   // Campinas
+  "14": 350,  // Bauru
+  "15": 200,  // Sorocaba
+  "16": 300,  // Ribeirão Preto
+  "17": 400,  // São José do Rio Preto
+  "18": 450,  // Presidente Prudente
+  "19": 180,  // Americana
+  
+  // Outros Estados
+  "20": 450,  // Rio de Janeiro
+  "21": 450,  // Rio de Janeiro
+  "22": 500,  // Campos/RJ
+  "23": 500,  // Nova Iguaçu/RJ
+  "24": 550,  // Volta Redonda/RJ
+  "25": 600,  // São Gonçalo/RJ
+  "26": 650,  // Nova Friburgo/RJ
+  "27": 700,  // Cachoeiro/ES
+  "28": 750,  // Campos/ES
+  "29": 800,  // Vitória/ES
+  
+  "30": 600,  // Belo Horizonte/MG
+  "31": 600,  // Belo Horizonte/MG
+  "32": 650,  // Juiz de Fora/MG
+  "33": 700,  // Governador Valadares/MG
+  "34": 750,  // Uberlândia/MG
+  "35": 500,  // Poços de Caldas/MG
+  "36": 550,  // Uberaba/MG
+  "37": 600,  // Divinópolis/MG
+  "38": 650,  // Montes Claros/MG
+  "39": 700,  // Patos de Minas/MG
+  
+  "40": 600,  // Curitiba/PR
+  "41": 600,  // Curitiba/PR
+  "42": 650,  // Ponta Grossa/PR
+  "43": 700,  // Apucarana/PR
+  "44": 750,  // Maringá/PR
+  "45": 800,  // Londrina/PR
+  "46": 850,  // Francisco Beltrão/PR
+  "47": 400,  // Joinville/SC
+  "48": 450,  // Florianópolis/SC
+  "49": 500,  // Criciúma/SC
+  
+  "50": 1200, // Recife/PE
+  "51": 900,  // Porto Alegre/RS
+  "52": 1150, // Maceió/AL
+  "53": 1250, // João Pessoa/PB
+  "54": 1300, // Natal/RN
+  "55": 1100, // Petrolina/PE
+  "56": 1350, // Campina Grande/PB
+  "57": 1200, // Arapiraca/AL
+  "58": 1300, // Sousa/PB
+  "59": 1350, // Mossoró/RN
+  
+  "60": 1450, // Teresina/PI
+  "61": 883, // Brasília/DF
+  "62": 1500, // Goiânia/GO
+  "63": 1400, // Palmas/TO
+  "64": 1600, // Parnaíba/PI
+  "65": 1000, // Cuiabá/MT
+  "66": 2200, // Rio Branco/AC
+  "67": 1100, // Campo Grande/MS
+  "68": 1800, // Porto Velho/RO
+  "69": 2400, // Manaus/AM
+  
+  "70": 883, // Brasília/DF
+  "71": 883, // Brasília/DF
+  "72": 883, // Brasília/DF
+  "73": 883, // Brasília/DF
+  
+  "74": 1500, // Goiânia/GO
+  "75": 1550, // Anápolis/GO
+  "76": 1600, // Caldas Novas/GO
+  "77": 1000, // Cuiabá/MT
+  "78": 1050, // Várzea Grande/MT
+  "79": 1100, // Campo Grande/MS
+  
+  "80": 700,  // Aracaju/SE
+  "81": 650,  // Recife/PE
+  "82": 1150, // Maceió/AL
+  "83": 1200, // João Pessoa/PB
+  "84": 1300, // Natal/RN
+  "85": 1800, // Fortaleza/CE
+  "86": 1450, // Teresina/PI
+  "87": 1350, // Garanhuns/PE
+  "88": 1400, // Petrolina/PE
+  "89": 1500, // Picos/PI
+  
+  "90": 1800, // São Luís/MA
+  "91": 2600, // Belém/PA
+  "92": 2800, // Manaus/AM
+  "93": 2700, // Santarém/PA
+  "94": 2900, // Marabá/PA
+  "95": 3000, // Boa Vista/RR
+  "96": 2500, // Macapá/AP
+  "97": 2400, // Coari/AM
+  "98": 1900, // São Luís/MA
+  "99": 1950, // Imperatriz/MA
+};
+
+// Sistema de fallback usando tabela de distâncias conhecidas
 async function calculateFreightFallback(customerCep: string, cart: CartItem[]): Promise<FreightBreakdown> {
   console.log('🔄 Usando sistema de fallback para CEP:', customerCep);
   
-  // Distância aproximada baseada em diferença de CEP
-  const warehouseCep = "09130410";
-  const customerCepNum = parseInt(customerCep.replace(/\D/g, ""));
-  const warehouseCepNum = parseInt(warehouseCep);
+  // Pega os primeiros 2 dígitos do CEP para determinar a região
+  const cepPrefix = customerCep.substring(0, 2);
+  let estimatedDistance = DISTANCE_TABLE[cepPrefix] || 1000; // padrão para CEPs não mapeados
   
-  // Cálculo simplificado baseado na diferença de CEP
-  const cepDiff = Math.abs(customerCepNum - warehouseCepNum);
-  let estimatedDistance = 5; // distância padrão
+  console.log(`📍 CEP ${customerCep} -> Região ${cepPrefix} -> Distância: ${estimatedDistance}km`);
   
-  // Caso específico para Vila Bastos (09041xxx)
+  // Casos específicos para nossa região (Santo André)
   if (customerCep.startsWith("09041")) {
-    estimatedDistance = 4.0; // distância conhecida para Vila Bastos
+    estimatedDistance = 4.0; // Vila Bastos - distância conhecida
     console.log('🎯 CEP Vila Bastos detectado, usando distância conhecida:', estimatedDistance, 'km');
-  } else {
-    // Estima distância baseada na diferença de CEP
-    if (cepDiff < 1000) {
-      estimatedDistance = 3 + (cepDiff / 1000) * 2; // 3-5km para CEPs próximos
-    } else if (cepDiff < 5000) {
-      estimatedDistance = 5 + (cepDiff / 5000) * 10; // 5-15km para CEPs da região
-    } else {
-      estimatedDistance = 15 + (cepDiff / 10000) * 20; // 15-35km para CEPs distantes
-    }
-    console.log('📏 Distância estimada por CEP diff:', estimatedDistance, 'km');
+  } else if (customerCep.startsWith("0913")) {
+    estimatedDistance = 2.0; // Centro de Santo André
+    console.log('🎯 CEP Centro Santo André detectado:', estimatedDistance, 'km');
+  } else if (customerCep.startsWith("091")) {
+    estimatedDistance = 8.0; // Outras regiões de Santo André
+    console.log('🎯 CEP Santo André detectado:', estimatedDistance, 'km');
   }
   
-  const adjustedDistance = estimatedDistance * 1.3; // aplica o multiplicador
+  // Aplica multiplicador diferenciado baseado na distância
+  const multiplier = estimatedDistance > 150 ? 1.22 : 1.3;
+  const adjustedDistance = estimatedDistance * multiplier;
+  
+  console.log(`🔢 Multiplicador aplicado: ${multiplier}x (${estimatedDistance}km -> ${adjustedDistance.toFixed(1)}km)`);
   
   // Cálcula pesos
   let actualWeightKg = 0;
