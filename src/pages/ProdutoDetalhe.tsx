@@ -24,12 +24,14 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductReview from "@/components/ProductReview";
 import { useProductReviews } from "@/hooks/useProductReviews";
+import { useCart } from "@/context/CartContext";
 
 const ProdutoDetalhe = () => {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const { addToCart } = useCart();
   
   // Hook para gerenciar avaliações
   const { 
@@ -265,6 +267,18 @@ const ProdutoDetalhe = () => {
               <Button 
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white h-10 md:h-12 text-sm md:text-base"
                 disabled={!product.inStock}
+                onClick={() => {
+                  for (let i = 0; i < quantity; i++) {
+                    addToCart({
+                      id: product.id.toString(),
+                      name: product.name,
+                      price: product.price,
+                      originalPrice: product.originalPrice,
+                      image: product.images[0],
+                      category: product.category
+                    });
+                  }
+                }}
               >
                 <ShoppingCart className="h-4 w-4 md:h-5 md:w-5 mr-1 md:mr-2" />
                 {product.inStock ? "Adicionar ao Carrinho" : "Indisponível"}

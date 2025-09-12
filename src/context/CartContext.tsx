@@ -10,6 +10,10 @@ interface CartItem {
   image: string;
   quantity: number;
   category: string;
+  weightKg?: number;
+  lengthCm?: number;
+  widthCm?: number;
+  heightCm?: number;
 }
 
 interface FavoriteItem {

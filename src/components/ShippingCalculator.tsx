@@ -3,141 +3,58 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Truck, Package, Calculator, CheckCircle } from "lucide-react";
-
-interface ShippingCalculation {
-  cep: string;
-  distance: number;
-  weight: number;
-  subtotal: number;
-  shippingCost: number;
-  total: number;
-  freeShipping: boolean;
-  estimatedDelivery: string;
-}
+import { Separator } from "@/components/ui/separator";
+import { MapPin, Truck, Package, Calculator, CheckCircle, Clock, Weight, Route, DollarSign, AlertCircle } from "lucide-react";
+import { calculateFreightForCart, FreightBreakdown } from "@/utils/googleFreightCalculator";
+import { useCart } from "@/context/CartContext";
 
 const ShippingCalculator = () => {
+  const { cartItems, getCartTotal } = useCart();
   const [cep, setCep] = useState("");
+  const [addressNumber, setAddressNumber] = useState("");
   const [cepInfo, setCepInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [calculation, setCalculation] = useState<ShippingCalculation | null>(null);
-
-  // Configurações do frete
-  const SHIPPING_CONFIG = {
-    baseRate: 7.90,
-    distanceRate: 1.20, // por km acima de 5km
-    freeShippingThreshold: 150.00,
-    storeCep: "09130-410", // CEP da loja COISA
-    weightRates: {
-      "1-5": 5.00,
-      "5-10": 10.00,
-      "10+": "personalizado"
-    }
-  };
-
-  // Dados de exemplo (simulando carrinho)
-  const cartData = {
-    items: [
-      { name: "Tinta Branca 18L", weight: 2.5, price: 45.00 },
-      { name: "Cimento CP-II 50kg", weight: 50, price: 25.00 },
-      { name: "Furadeira 13mm", weight: 1.8, price: 120.00 }
-    ],
-    totalWeight: 54.3,
-    subtotal: 190.00
-  };
+  const [calculation, setCalculation] = useState<FreightBreakdown | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCepInfo = async (cepValue: string) => {
     if (cepValue.length !== 8) return;
     
     setIsLoading(true);
+    setError(null);
     try {
       const response = await fetch(`https://viacep.com.br/ws/${cepValue}/json/`);
       const data = await response.json();
       
       if (!data.erro) {
         setCepInfo(data);
-        calculateShipping(cepValue, data);
+        await calculateAdvancedShipping(cepValue);
+      } else {
+        setError("CEP não encontrado");
       }
     } catch (error) {
       console.error("Erro ao buscar CEP:", error);
+      setError("Erro ao buscar informações do CEP");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const calculateDistance = (cepOrigin: string, cepDest: string): number => {
-    // Cálculo de distância baseado em CEPs
-    // CEP da loja: 09130-410 (Santo André - SP)
-    const cepNumbers = {
-      origin: parseInt(cepOrigin.replace("-", "")),
-      dest: parseInt(cepDest.replace("-", ""))
-    };
-    
-    // Cálculo mais preciso baseado na diferença dos CEPs
-    const difference = Math.abs(cepNumbers.origin - cepNumbers.dest);
-    
-    // Mapeamento específico para CEPs da Grande São Paulo
-    // Baseado na localização da loja em Santo André (09130-410)
-    
-    // Para CEPs da Grande São Paulo (mais preciso)
-    if (difference < 1000) {
-      return Math.max(1, Math.floor(difference / 100)); // 1-10 km
-    } else if (difference < 5000) {
-      return Math.max(3, Math.floor(difference / 200)); // 3-25 km
-    } else if (difference < 20000) {
-      return Math.max(8, Math.floor(difference / 500)); // 8-40 km
-    } else if (difference < 50000) {
-      return Math.max(15, Math.floor(difference / 1000)); // 15-50 km
-    } else {
-      return Math.max(25, Math.floor(difference / 2000)); // 25+ km
+  const calculateAdvancedShipping = async (cepValue: string) => {
+    try {
+      // Monta endereço completo se número foi fornecido
+      const fullAddress = addressNumber 
+        ? `${cepValue}, ${addressNumber}` 
+        : cepValue;
+      
+      // Calcula frete usando Google Maps API
+      const freightBreakdown = await calculateFreightForCart(fullAddress, cartItems);
+      
+      setCalculation(freightBreakdown);
+    } catch (error) {
+      console.error("Erro no cálculo de frete:", error);
+      setError("Erro ao calcular frete. Verifique o CEP informado.");
     }
-  };
-
-  const calculateWeightCost = (weight: number): number => {
-    if (weight <= 1) return 0;
-    if (weight <= 5) return SHIPPING_CONFIG.weightRates["1-5"];
-    if (weight <= 10) return SHIPPING_CONFIG.weightRates["5-10"];
-    return 15.00; // Para pesos acima de 10kg
-  };
-
-  const calculateShipping = (cepValue: string, cepData: any) => {
-    const distance = calculateDistance(SHIPPING_CONFIG.storeCep, cepValue);
-    const weightCost = calculateWeightCost(cartData.totalWeight);
-    
-    let shippingCost = SHIPPING_CONFIG.baseRate;
-    
-    // Adicional por distância
-    if (distance > 5) {
-      shippingCost += (distance - 5) * SHIPPING_CONFIG.distanceRate;
-    }
-    
-    // Adicional por peso
-    shippingCost += weightCost;
-    
-    // Frete grátis
-    const freeShipping = cartData.subtotal >= SHIPPING_CONFIG.freeShippingThreshold;
-    if (freeShipping) {
-      shippingCost = 0;
-    }
-    
-         // O frete não é adicionado ao total, apenas informativo
-     const total = cartData.subtotal;
-    
-    // Estimativa de entrega
-    const estimatedDelivery = distance <= 10 ? "1-2 dias úteis" : 
-                             distance <= 30 ? "2-3 dias úteis" : 
-                             "3-5 dias úteis";
-    
-    setCalculation({
-      cep: cepValue,
-      distance,
-      weight: cartData.totalWeight,
-      subtotal: cartData.subtotal,
-      shippingCost,
-      total,
-      freeShipping,
-      estimatedDelivery
-    });
   };
 
   const handleCepChange = (value: string) => {
@@ -146,16 +63,24 @@ const ShippingCalculator = () => {
     
     if (cleanCep.length === 8) {
       fetchCepInfo(cleanCep);
+    } else {
+      setCalculation(null);
+      setCepInfo(null);
+      setError(null);
     }
   };
 
+  const formatCep = (cep: string) => {
+    return cep.replace(/(\d{5})(\d{3})/, '$1-$2');
+  };
+
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
-            Calculadora de Frete
+            Calculadora de Frete Avançada
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -179,6 +104,33 @@ const ShippingCalculator = () => {
             </div>
           </div>
 
+          {/* Input Número do Endereço */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium">
+              Número do Endereço 
+              <span className="text-xs text-gray-500 ml-1">(opcional - para maior precisão)</span>
+            </label>
+            <Input
+              placeholder="Ex: 123, 456A, S/N"
+              value={addressNumber}
+              onChange={(e) => setAddressNumber(e.target.value)}
+              className="w-full"
+            />
+            <p className="text-xs text-gray-500">
+              💡 Incluir o número melhora a precisão do cálculo de distância
+            </p>
+          </div>
+
+          {/* Erro */}
+          {error && (
+            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <span className="text-red-800 font-medium">{error}</span>
+              </div>
+            </div>
+          )}
+
           {/* Informações do CEP */}
           {cepInfo && (
             <div className="p-4 bg-muted rounded-lg">
@@ -197,65 +149,127 @@ const ShippingCalculator = () => {
 
           {/* Resultado do cálculo */}
           {calculation && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-muted-foreground">Distância:</span>
-                  <p className="font-medium">{calculation.distance} km</p>
+            <div className="space-y-6">
+              {/* Resumo Principal */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Route className="h-4 w-4 text-blue-600" />
+                    <span className="font-medium text-blue-800">Distância</span>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-900">{calculation.distanceKm} km</p>
+                  <p className="text-xs text-blue-600 mt-1">
+                    Google Maps | Rota Ajustada (+30%)
+                  </p>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Peso total:</span>
-                  <p className="font-medium">{calculation.weight} kg</p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Prazo estimado:</span>
-                  <p className="font-medium">{calculation.estimatedDelivery}</p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Subtotal:</span>
-                  <p className="font-medium">R$ {calculation.subtotal.toFixed(2)}</p>
-                </div>
-              </div>
-
-              {/* Custo do frete */}
-              <div className="border-t pt-4">
-                                 <div className="flex justify-between items-center">
-                   <span className="text-muted-foreground">Custo do frete:</span>
-                   <div className="flex items-center gap-2">
-                     {calculation.freeShipping ? (
-                       <>
-                         <Badge variant="secondary" className="bg-green-100 text-green-800">
-                           <CheckCircle className="h-3 w-3 mr-1" />
-                           Grátis
-                         </Badge>
-                         <span className="font-bold text-lg">Grátis</span>
-                       </>
-                     ) : (
-                       <span className="font-bold text-lg">
-                         R$ {calculation.shippingCost.toFixed(2)}
-                       </span>
-                     )}
-                   </div>
-                 </div>
                 
-                <div className="flex justify-between items-center mt-2 pt-2 border-t">
-                  <span className="font-bold">Total:</span>
-                  <span className="font-bold text-xl text-primary">
-                    R$ {calculation.total.toFixed(2)}
-                  </span>
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Clock className="h-4 w-4 text-green-600" />
+                    <span className="font-medium text-green-800">Prazo</span>
+                  </div>
+                  <p className="text-2xl font-bold text-green-900">{calculation.estimatedDeliveryDays} dias úteis</p>
+                </div>
+                
+                <div className="p-4 bg-purple-50 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Weight className="h-4 w-4 text-purple-600" />
+                    <span className="font-medium text-purple-800">Peso Total</span>
+                  </div>
+                  <p className="text-2xl font-bold text-purple-900">{calculation.totalWeightKg} kg</p>
                 </div>
               </div>
 
-              {/* Opções de frete */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <Button className="w-full" variant="outline">
-                  <Truck className="h-4 w-4 mr-2" />
-                  Econômico
-                </Button>
-                <Button className="w-full">
-                  <Package className="h-4 w-4 mr-2" />
-                  Expresso
-                </Button>
+              {/* Breakdown Detalhado */}
+              <div className="space-y-4">
+                <h3 className="font-semibold text-lg">Detalhamento do Frete</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Itens no carrinho:</span>
+                      <span className="font-medium">{calculation.totalItems}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Distância em linha reta:</span>
+                      <span className="font-medium">{calculation.distanceKm} km</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Distância ajustada (rota):</span>
+                      <span className="font-medium">{calculation.adjustedDistanceKm} km</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Peso real:</span>
+                      <span className="font-medium">{calculation.actualWeightKg} kg</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Peso volumétrico:</span>
+                      <span className="font-medium">{calculation.volumetricWeightKg} kg</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Peso considerado:</span>
+                      <span className="font-medium">{calculation.totalWeightKg} kg</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Tarifa base:</span>
+                      <span className="font-medium">R$ {calculation.baseFee.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Taxa por distância:</span>
+                      <span className="font-medium">R$ {calculation.distanceFee.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Taxa por peso:</span>
+                      <span className="font-medium">R$ {calculation.weightFee.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Taxa por item:</span>
+                      <span className="font-medium">R$ {calculation.itemHandlingFee.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Seguro:</span>
+                      <span className="font-medium">R$ {calculation.valueInsuranceFee.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <Separator />
+
+                {/* Total do Frete */}
+                <div className="flex justify-between items-center p-4 bg-muted rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="h-5 w-5 text-primary" />
+                    <span className="font-semibold text-lg">Custo do Frete:</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {calculation.freeShippingApplied ? (
+                      <>
+                        <Badge variant="secondary" className="bg-green-100 text-green-800">
+                          <CheckCircle className="h-3 w-3 mr-1" />
+                          Grátis
+                        </Badge>
+                        <span className="font-bold text-2xl text-green-600">Grátis</span>
+                      </>
+                    ) : (
+                      <span className="font-bold text-2xl text-primary">
+                        R$ {calculation.finalFreight.toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Informações Adicionais */}
+                <div className="text-xs text-muted-foreground space-y-1">
+                  <p>• <strong>Google Maps:</strong> Geocodificação precisa de endereços</p>
+                  <p>• <strong>Distância Ajustada:</strong> +30% sobre linha reta (rotas reais)</p>
+                  <p>• <strong>Peso Volumétrico:</strong> (L × A × C) ÷ 6000</p>
+                  <p>• <strong>Peso Efetivo:</strong> Maior entre peso real e volumétrico</p>
+                  <p>• <strong>Frete Grátis:</strong> Pedidos acima de R$ 199,00</p>
+                  <p>• <strong>Prazos Estendidos:</strong> Até 10km: 3 dias | Até 50km: 5 dias | Até 200km: 6 dias | Acima 200km: 8 dias</p>
+                </div>
               </div>
             </div>
           )}

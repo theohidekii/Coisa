@@ -14,39 +14,32 @@ const Footer = () => {
     ],
          servicos: [
        "Entrega",
-       "Orçamento Online",
        "Assistência Técnica",
-       "Instalação",
        "Pós-venda",
        "Ofertas"
      ],
          empresa: [
        "Sobre Nós",
-       "Trabalhe Conosco",
        "Política de Privacidade",
        "Termos de Uso",
        "FAQ"
      ]
   };
 
-     const getServiceLink = (service: string) => {
-     switch (service) {
-       case 'Entrega':
-         return '/entrega';
-       case 'Orçamento Online':
-         return '/assistencia#orcamento';
-       case 'Assistência Técnica':
-         return '/assistencia';
-       case 'Instalação':
-         return '/assistencia';
-       case 'Pós-venda':
-         return '/pos-venda';
-       case 'Ofertas':
-         return '/ofertas';
-       default:
-         return '#';
-     }
-   };
+           const getServiceLink = (service: string) => {
+      switch (service) {
+        case 'Entrega':
+          return '/entrega';
+        case 'Assistência Técnica':
+          return '/assistencia';
+        case 'Pós-venda':
+          return '/pos-venda';
+        case 'Ofertas':
+          return '/ofertas';
+        default:
+          return '#';
+      }
+    };
 
      const getCompanyLink = (link: string) => {
      switch (link) {

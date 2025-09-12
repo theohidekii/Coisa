@@ -1,5 +1,5 @@
 # 🏗️ Coisa - Materiais de Construção
-
+   
 ## 📋 Descrição
 
 Coisa é uma plataforma de e-commerce moderna e responsiva especializada em materiais de construção. Desenvolvida com React, TypeScript e Tailwind CSS, oferece uma experiência de compra intuitiva e eficiente, com foco total na experiência mobile.

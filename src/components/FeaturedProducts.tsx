@@ -5,10 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import ReviewSummary from "@/components/ReviewSummary";
 import { useGlobalProductReviews } from "@/hooks/useGlobalProductReviews";
+import { useCart } from "@/context/CartContext";
 
 const FeaturedProducts = () => {
   // Hook para avaliações globais
   const { getProductReview } = useGlobalProductReviews();
+  const { addToCart } = useCart();
 
   // Dados de exemplo - em produção virão do sistema de admin
   const products = [
@@ -96,19 +98,19 @@ const FeaturedProducts = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
           {products.map((product) => (
-            <Card key={product.id} className="border-0 shadow-sm bg-white rounded-xl overflow-hidden hover:shadow-md transition-shadow h-[450px] flex flex-col">
+            <Card key={product.id} className="border-0 shadow-sm bg-white rounded-xl overflow-hidden hover:shadow-xl hover:scale-105 transition-all duration-300 ease-in-out h-[450px] flex flex-col group">
               <div className="relative">
                 {/* Product Image */}
                 <div className="w-full h-48 bg-slate-100 overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center">
-                    <span className="text-4xl text-muted-foreground">📦</span>
+                  <div className="w-full h-full bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ease-in-out">
+                    <span className="text-4xl text-muted-foreground group-hover:scale-110 transition-transform duration-300">📦</span>
                   </div>
                 </div>
                 
                 {/* Badge */}
                 <Badge 
                   variant={getBadgeVariant(product.badge)}
-                  className="absolute top-2 left-2"
+                  className="absolute top-2 left-2 group-hover:scale-110 transition-transform duration-300 ease-in-out"
                 >
                   {product.badge}
                 </Badge>
@@ -121,7 +123,7 @@ const FeaturedProducts = () => {
                 </Badge>
 
                 {/* Product Info */}
-                <h3 className="text-base font-semibold text-slate-900 mb-2 line-clamp-2">{product.name}</h3>
+                <h3 className="text-base font-semibold text-slate-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">{product.name}</h3>
                 <p className="text-xs text-slate-600 mb-3 line-clamp-3 flex-1">
                   {product.name} de alta qualidade para suas construções
                 </p>
@@ -146,14 +148,24 @@ const FeaturedProducts = () => {
                 </div>
                 
                 {/* Price */}
-                <p className="text-lg font-bold text-blue-600 mb-4">
+                <p className="text-lg font-bold text-blue-600 mb-4 group-hover:scale-105 transition-transform duration-300">
                   R$ {product.price.toFixed(2).replace('.', ',')}
                 </p>
 
                 {/* Action Buttons */}
                 <div className="flex space-x-2 mt-auto">
-                  <Button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm">
-                    <ShoppingCart className="h-3 w-3 mr-2" />
+                  <Button 
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm group-hover:scale-105 transition-transform duration-300 hover:shadow-lg"
+                    onClick={() => addToCart({
+                      id: product.id.toString(),
+                      name: product.name,
+                      price: product.price,
+                      originalPrice: product.originalPrice,
+                      image: product.image,
+                      category: product.category
+                    })}
+                  >
+                    <ShoppingCart className="h-3 w-3 mr-2 group-hover:rotate-12 transition-transform duration-300" />
                     Adicionar ao Carrinho
                   </Button>
                 </div>

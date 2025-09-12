@@ -31,12 +31,14 @@ const Header = () => {
   const navigationItems = [
     { name: "Início", href: "/" },
     { name: "Produtos", href: "/produtos" },
+    { name: "Teste Carrinho", href: "/teste-carrinho" },
+    { name: "Teste Frete", href: "/teste-frete" },
     { name: "Assistência Técnica", href: "/assistencia" },
     { name: "Contato", href: "#contato" },
   ];
 
   return (
-    <header className="bg-background border-b border-border sticky top-0 z-50">
+    <header className="bg-primary text-primary-foreground border-b border-primary-foreground/20 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
@@ -51,7 +53,7 @@ const Header = () => {
           </div>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-xl mx-8">
+          <div className="hidden md:flex flex-1 max-w-xl mx-4">
             <SearchBox 
               onSearch={(query) => {
                 // Redirecionar para a página de produtos com a busca
@@ -60,32 +62,34 @@ const Header = () => {
             />
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navigationItems.map((item) => (
-              item.href.startsWith('#') ? (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-foreground hover:text-primary transition-all duration-300 px-3 py-2 rounded-lg hover:bg-blue-100"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const element = document.querySelector(item.href);
-                    if (element) element.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                >
-                  {item.name}
-                </a>
-              ) : (
-                <Link key={item.name} to={item.href} className="text-foreground hover:text-primary transition-all duration-300 px-3 py-2 rounded-lg hover:bg-blue-100">
-                  {item.name}
-                </Link>
-              )
-            ))}
+          {/* Desktop Navigation - Centralized */}
+          <nav className="hidden md:flex items-center justify-center flex-1">
+            <div className="flex items-center space-x-8">
+              {navigationItems.map((item) => (
+                item.href.startsWith('#') ? (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="text-primary-foreground hover:text-accent transition-all duration-300 px-3 py-2 rounded-lg hover:bg-primary-foreground/10"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      const element = document.querySelector(item.href);
+                      if (element) element.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <Link key={item.name} to={item.href} className="text-primary-foreground hover:text-accent transition-all duration-300 px-3 py-2 rounded-lg hover:bg-primary-foreground/10">
+                    {item.name}
+                  </Link>
+                )
+              ))}
+            </div>
           </nav>
 
           {/* Action Buttons */}
-          <div className="flex items-center space-x-4 md:space-x-8">
+          <div className="flex items-center space-x-4 md:space-x-8 flex-shrink-0">
             {/* User Dropdown - Desktop */}
             <div className="relative hidden md:block" ref={userDropdownRef}>
               <Button 

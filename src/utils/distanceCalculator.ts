@@ -1,5 +1,6 @@
 // Utilitário para cálculo de distância entre CEPs
 // Baseado em coordenadas geográficas reais
+// Atualizado em: 2024-12-19 - Correção do cálculo de distância
 
 interface CepCoordinates {
   cep: string;
@@ -32,6 +33,24 @@ const CEP_COORDINATES: Record<string, CepCoordinates> = {
   "09147": { cep: "09147", lat: -23.6639, lng: -46.5383, city: "Santo André", state: "SP" },
   "09148": { cep: "09148", lat: -23.6639, lng: -46.5383, city: "Santo André", state: "SP" },
   "09149": { cep: "09149", lat: -23.6639, lng: -46.5383, city: "Santo André", state: "SP" },
+  
+  // Vila Bastos, Santo André (CEP específico mencionado pelo usuário)
+  "09041": { cep: "09041", lat: -23.6580, lng: -46.5450, city: "Santo André", state: "SP" },
+  
+  // Outros CEPs de Santo André para melhor precisão
+  "09010": { cep: "09010", lat: -23.6650, lng: -46.5400, city: "Santo André", state: "SP" },
+  "09015": { cep: "09015", lat: -23.6650, lng: -46.5400, city: "Santo André", state: "SP" },
+  "09020": { cep: "09020", lat: -23.6650, lng: -46.5400, city: "Santo André", state: "SP" },
+  "09025": { cep: "09025", lat: -23.6650, lng: -46.5400, city: "Santo André", state: "SP" },
+  "09030": { cep: "09030", lat: -23.6650, lng: -46.5400, city: "Santo André", state: "SP" },
+  "09035": { cep: "09035", lat: -23.6650, lng: -46.5400, city: "Santo André", state: "SP" },
+  "09040": { cep: "09040", lat: -23.6580, lng: -46.5450, city: "Santo André", state: "SP" },
+  "09045": { cep: "09045", lat: -23.6580, lng: -46.5450, city: "Santo André", state: "SP" },
+  "09050": { cep: "09050", lat: -23.6580, lng: -46.5450, city: "Santo André", state: "SP" },
+  "09060": { cep: "09060", lat: -23.6600, lng: -46.5350, city: "Santo André", state: "SP" },
+  "09070": { cep: "09070", lat: -23.6600, lng: -46.5350, city: "Santo André", state: "SP" },
+  "09080": { cep: "09080", lat: -23.6600, lng: -46.5350, city: "Santo André", state: "SP" },
+  "09090": { cep: "09090", lat: -23.6600, lng: -46.5350, city: "Santo André", state: "SP" },
   
   // São Paulo (Capital)
   "01000": { cep: "01000", lat: -23.5505, lng: -46.6333, city: "São Paulo", state: "SP" },
@@ -267,22 +286,44 @@ export function calculateDistance(cepOrigin: string, cepDest: string): number {
   }
   
   // Fallback: cálculo baseado na diferença dos CEPs (menos preciso)
-  const originNum = parseInt(cleanOrigin);
-  const destNum = parseInt(cleanDest);
-  const difference = Math.abs(originNum - destNum);
+  // Usar apenas os primeiros 5 dígitos (região) para cálculo mais preciso
+  const originPrefix = parseInt(cleanOrigin.substring(0, 5));
+  const destPrefix = parseInt(cleanDest.substring(0, 5));
+  const difference = Math.abs(originPrefix - destPrefix);
   
-  // Mapeamento baseado na diferença dos CEPs
-  if (difference < 1000) {
-    return Math.max(1, Math.floor(difference / 100));
+  // Para CEPs muito próximos (mesma região), usar distância mínima
+  let fallbackDistance;
+  if (difference < 30) {
+    fallbackDistance = 1; // Menos de 1km
+  } else if (difference < 60) {
+    fallbackDistance = 2; // 1-2km
+  } else if (difference < 100) {
+    fallbackDistance = 3; // 2-3km
+  } else if (difference < 150) {
+    fallbackDistance = 4; // 3-4km
+  } else if (difference < 200) {
+    fallbackDistance = 5; // 4-5km
+  } else if (difference < 300) {
+    fallbackDistance = 6; // 5-6km
+  } else if (difference < 500) {
+    fallbackDistance = Math.max(6, Math.floor(difference / 80)); // 6-7km
+  } else if (difference < 1000) {
+    fallbackDistance = Math.max(7, Math.floor(difference / 120)); // 7-9km
+  } else if (difference < 2000) {
+    fallbackDistance = Math.max(9, Math.floor(difference / 150)); // 9-14km
   } else if (difference < 5000) {
-    return Math.max(3, Math.floor(difference / 200));
+    fallbackDistance = Math.max(14, Math.floor(difference / 200)); // 14-25km
+  } else if (difference < 10000) {
+    fallbackDistance = Math.max(25, Math.floor(difference / 300)); // 25-35km
   } else if (difference < 20000) {
-    return Math.max(8, Math.floor(difference / 500));
+    fallbackDistance = Math.max(35, Math.floor(difference / 500)); // 35-40km
   } else if (difference < 50000) {
-    return Math.max(15, Math.floor(difference / 1000));
+    fallbackDistance = Math.max(40, Math.floor(difference / 1000)); // 40-50km
   } else {
-    return Math.max(25, Math.floor(difference / 2000));
+    fallbackDistance = Math.max(50, Math.floor(difference / 1500)); // 50+ km
   }
+  
+  return fallbackDistance;
 }
 
 /**

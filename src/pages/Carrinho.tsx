@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { calculateDistance, calculateShippingCost, getEstimatedDelivery, STORE_CEP } from "@/utils/distanceCalculator";
+import { calculateFreightForCart } from "@/utils/googleFreightCalculator";
 import { useCart } from "@/context/CartContext";
 
 interface CartItem {
@@ -44,36 +44,24 @@ const Carrinho = () => {
     
     setIsCalculatingShipping(true);
     try {
-      // Cálculo de frete baseado no modelo fornecido
-      const totalWeight = cartItems.reduce((sum, item) => sum + (item.weight || 1 * item.quantity), 0);
-      const subtotal = calculateSubtotal();
+      // Calcula frete usando Google Maps API
+      const freightBreakdown = await calculateFreightForCart(cepValue, cartItems);
       
-      // Cálculo de distância usando o novo utilitário
-      const distance = calculateDistance(STORE_CEP, cepValue);
+      console.log('Cálculo de frete (Google Maps):', freightBreakdown);
       
-      // Calcular custo do frete
-      const freeShipping = subtotal >= 150;
-      const shippingCost = calculateShippingCost(distance, totalWeight, freeShipping);
-      
-      // Tempo estimado de entrega
-      const estimatedDelivery = getEstimatedDelivery(distance);
-      
-      console.log('Cálculo de frete:', {
-        cep: cepValue,
-        distance,
-        totalWeight,
-        subtotal,
-        shippingCost,
-        freeShipping
-      });
-      
-      setShippingCost(shippingCost);
+      setShippingCost(freightBreakdown.finalFreight);
       setShippingInfo({
-        distance,
-        estimatedDelivery
+        distance: freightBreakdown.adjustedDistanceKm,
+        estimatedDelivery: `${freightBreakdown.estimatedDeliveryDays} dias úteis`
       });
     } catch (error) {
       console.error("Erro ao calcular frete:", error);
+      // Fallback em caso de erro
+      setShippingCost(0);
+      setShippingInfo({
+        distance: 0,
+        estimatedDelivery: "Não disponível"
+      });
     } finally {
       setIsCalculatingShipping(false);
     }
@@ -348,7 +336,7 @@ const Carrinho = () => {
                              </>
                            ) : (
                              <span className="font-semibold text-slate-900">
-                               {shippingCost > 0 ? formatPrice(shippingCost) : 'Calculando...'}
+                               {shippingCost > 0 ? formatPrice(shippingCost) : 'Não disponível'}
                              </span>
                            )}
                          </div>
