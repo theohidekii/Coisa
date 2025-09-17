@@ -1,76 +1,77 @@
-# 🏗️ Coisa - Materiais de Construção
+# 🏗️ Coisa - Construction Materials
    
-## 📋 Descrição
+## 📋 Description
 
-Coisa é uma plataforma de e-commerce moderna e responsiva especializada em materiais de construção. Desenvolvida com React, TypeScript e Tailwind CSS, oferece uma experiência de compra intuitiva e eficiente, com foco total na experiência mobile.
+Coisa is a modern and responsive e-commerce platform specialized in construction materials. Built with React, TypeScript, and Tailwind CSS, it delivers an intuitive and efficient shopping experience, with a mobile-first approach.
 
-## ✨ Funcionalidades Principais
+## ✨ Main Features
 
-### 🛍️ Sistema de Produtos
-- **Catálogo Completo**: Visualização de produtos com filtros por categoria
-- **Busca Inteligente**: Sistema de busca com sugestões em tempo real
-- **Páginas de Detalhes**: Informações completas dos produtos com galeria de imagens
-- **Sistema de Avaliações**: Usuários que compraram podem avaliar produtos com estrelas e comentários
-- **Página de Ofertas**: Produtos em promoção com preços especiais
-- **Favoritos**: Sistema de lista de desejos integrado
+### 🛍️ Product System
+- **Complete Catalog**: Product browsing with category filters
+- **Smart Search**: Real-time search with suggestions
+- **Product Details Pages**: Full product info with image gallery
+- **Review System**: Verified buyers can rate products with stars and comments
+- **Offers Page**: Special deals and promotions
+- **Favorites**: Integrated wishlist system
 
-### 🛒 Carrinho de Compras Avançado
-- **Gestão de Itens**: Adicionar, remover e alterar quantidades
-- **Contador Visual**: Notificação com número de itens no carrinho
-- **Persistência Local**: Dados mantidos mesmo quando deslogado
-- **Sincronização**: Carrinho sincroniza automaticamente ao fazer login
-- **Favoritos Integrados**: Sistema unificado de carrinho e favoritos
+### 🛒 Advanced Shopping Cart
+- **Item Management**: Add, remove, and update quantities
+- **Visual Counter**: Notification with the number of items in the cart
+- **Local Persistence**: Data stored even when logged out
+- **Sync**: Cart automatically synchronizes upon login
+- **Integrated Favorites**: Unified cart and wishlist system
 
-### 🚚 Sistema de Entrega Otimizado
-- **Cálculo de Frete Inteligente**: Taxa base + distância + peso
-- **Integração ViaCEP**: Busca automática de endereços
-- **Cobertura Expandida**: Verificação de área de entrega (8km)
-- **Frete Grátis**: Para compras acima de R$ 150,00
-- **CEP da Loja**: 09130-410 (Santo André)
-- **Cálculo de Distância**: Fórmula de Haversine para precisão
+### 🚚 Optimized Delivery System
+- **Smart Shipping Calculation**: Base fee + distance + weight
+- **ViaCEP Integration**: Automatic address lookup
+- **Expanded Coverage**: Delivery area check (8km radius)
+- **Free Shipping**: For purchases above R$ 150.00
+- **Store Zip Code**: 09130-410 (Santo André)
+- **Distance Calculation**: Haversine formula for precision
 
-### 👤 Sistema de Usuários Completo
-- **Cadastro e Login**: Autenticação completa
-- **Perfil do Usuário**: Dados pessoais e múltiplos endereços
-- **Gerenciamento de Endereços**: Adicionar, editar e remover endereços
-- **Histórico**: Acompanhamento de pedidos
-- **Sincronização**: Dados do carrinho/favoritos sincronizam ao logar
+### 👤 Complete User System
+- **Sign Up and Login**: Full authentication
+- **User Profile**: Personal data and multiple addresses
+- **Address Management**: Add, edit, and delete addresses
+- **Order History**: Track all past purchases
+- **Sync**: Cart and wishlist data synchronized when logging in
 
-### 💳 Checkout e Pagamento
-- **Fluxo Completo**: Informações pessoais → Endereço → Pagamento
-- **Múltiplas Formas**: Cartão de crédito, PIX, Boleto
-- **Validação**: Verificação de dados obrigatórios
-- **Endereços Salvos**: Seleção rápida de endereços cadastrados
+### 💳 Checkout and Payment
+- **Complete Flow**: Personal info → Address → Payment
+- **Multiple Methods**: Credit card, PIX, Boleto
+- **Validation**: Required fields verification
+- **Saved Addresses**: Quick selection of stored addresses
 
-### 🔧 Serviços e Suporte
-- **Assistência Técnica**: Página dedicada com informações completas
-- **Entrega**: Detalhes sobre métodos de entrega (própria, correios, retirada)
-- **Pós-venda**: Suporte completo após a compra
-- **Orçamento Online**: Integração com WhatsApp para orçamentos
-- **FAQ**: Perguntas frequentes organizadas por categoria
+### 🔧 Services and Support
+- **Technical Assistance**: Dedicated page with complete information
+- **Delivery Info**: Own fleet, postal services, or pickup
+- **After-Sales**: Full post-purchase support
+- **Online Quotes**: WhatsApp integration for custom quotes
+- **FAQ**: Frequently asked questions organized by category
 
-### 📄 Conformidade Legal
-- **LGPD**: Política de Privacidade em conformidade com a Lei Geral de Proteção de Dados
-- **Termos de Uso**: Termos e condições claros e transparentes
-- **CPF**: Coleta apenas durante criação de conta
+### 📄 Legal Compliance
+- **LGPD**: Privacy Policy compliant with Brazilian General Data Protection Law
+- **Terms of Use**: Clear and transparent conditions
+- **CPF**: Collected only during account creation
 
-### 🏢 Informações da Empresa
-- **Sobre Nós**: História, valores e produtos da empresa
-- **Horário de Funcionamento**: Incluindo feriados (mesmo horário dos sábados)
-- **Localização**: Av. Dom Pedro I, 2275, Vila Vitória, Santo André - SP
+### 🏢 Company Information
+- **About Us**: Company history, values, and products
+- **Business Hours**: Including holidays (same as Saturday hours)
+- **Location**: Av. Dom Pedro I, 2275, Vila Vitória, Santo André - SP
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Tech Stack
 
 - **Frontend**: React 18 + TypeScript
-- **Estilização**: Tailwind CSS + Shadcn/ui
-- **Roteamento**: React Router DOM
-- **Estado**: React Context API (CartContext, UserContext)
+- **Styling**: Tailwind CSS + Shadcn/ui
+- **Routing**: React Router DOM
+- **State Management**: React Context API (CartContext, UserContext)
 - **Build**: Vite
 - **Linting**: ESLint
-- **Formatação**: Prettier
-- **APIs Externas**: ViaCEP para busca de endereços
+- **Formatting**: Prettier
+- **External APIs**: ViaCEP for address lookup
 
-## 📦 Estrutura do Projeto
+## 📦 Project Structure
+
 
 ```
 src/
@@ -111,26 +112,26 @@ src/
     └── ...
 ```
 
-## 🚀 Como Executar
+## 🚀 Getting Started
 
-### Pré-requisitos
+### Prerequisites
 - Node.js 18+ 
 - npm ou yarn
 
-### Instalação
+### Installation
 ```bash
 # Clone o repositório
 git clone https://github.com/theohidekii/Coisa.git
 cd Coisa
 
-# Instale as dependências
+# Installation dependencies
 npm install
 
-# Execute o projeto
+# Run the project
 npm run dev
 ```
 
-### Scripts Disponíveis
+### Available Scripts
 ```bash
 npm run dev          # Executa em modo desenvolvimento
 npm run build        # Gera build de produção
@@ -138,93 +139,89 @@ npm run preview      # Preview do build
 npm run lint         # Executa o linter
 ```
 
-## 📱 Responsividade e Mobile-First
+## 📱 Mobile-First and Responsiveness
 
-O projeto foi desenvolvido com foco total na experiência mobile:
+The project was designed with a strong mobile-first approach:
 
-### 🎯 Otimizações Mobile Implementadas
-- **Design Mobile-First**: Todos os componentes otimizados para mobile
-- **Menu Mobile Integrado**: Menu hambúrguer no header com todas as funcionalidades principais
-- **Navegação Simplificada**: Remoção da navegação inferior, foco no menu lateral
-- **Grids Responsivos**: Layouts que se adaptam a diferentes telas
-- **Touch-Friendly**: Botões e elementos otimizados para toque
-- **Performance**: Carregamento otimizado para dispositivos móveis
-- **Acesso à Conta**: Menu mobile dedicado para "Minha Conta" e "Meus Pedidos"
+### 🎯 Mobile Optimizations
+- **Mobile-First Design**: All components optimized for small screens
+- **Integrated Mobile Menu**: Hamburger menu with main functionalities
+- **Simplified Navigation**: Removed bottom navigation in favor of side menu
+- **Responsive Grids**: Layouts adapt to different screen sizes
+- **Touch-Friendly**: Buttons and elements optimized for touch
+- **Performance**: Optimized loading for mobile devices
+- **Account Access**: Dedicated mobile menu for "My Account" and "My Orders"
 
-### 📱 Dispositivos Suportados
+### 📱 Supported Devices
 - 📱 Smartphones (320px+)
 - 📱 Tablets (768px+)
 - 💻 Desktops (1024px+)
-- 🖥️ Telas grandes (1440px+)
+- 🖥️ Large screens (1440px+)
 
 ## 🎨 Design System
 
-- **Cores**: Paleta azul profissional com variações
-- **Tipografia**: Sistema hierárquico responsivo
-- **Componentes**: Reutilizáveis e consistentes (Shadcn/ui)
-- **Animações**: Transições suaves e feedback visual
-- **Ícones**: Lucide React para consistência
+- **Colors**: Professional blue palette with variations
+- **Typography**: Responsive hierarchical system
+- **Components**: Consistent and reusable (Shadcn/ui)
+- **Animations**: Smooth transitions and visual feedback
+- **Icons**: Lucide React for consistency
 
-## 🔒 Segurança e Privacidade
+## 🔒 Security and Privacy
 
-- **Validação**: Dados de entrada validados em todos os formulários
-- **Sanitização**: Prevenção contra XSS
-- **LGPD**: Conformidade com a Lei Geral de Proteção de Dados
-- **HTTPS**: Comunicação segura (em produção)
-- **Local Storage**: Dados do carrinho persistidos localmente
+- **Validation**: Input validation in all forms
+- **Sanitization**: XSS protection
+- **LGPD**: Compliance with Brazilian data law
+- **HTTPS**: Secure communication (production)
+- **Local Storage**: Cart data persisted locally
 
-## 📈 Performance e Otimização
+## 📈 Performance and Optimization
 
-- **Lazy Loading**: Carregamento sob demanda de componentes
-- **Otimização de Imagens**: Imagens responsivas e otimizadas
-- **Caching**: Estratégias de cache implementadas
-- **Bundle Splitting**: Código dividido para melhor performance
-- **Mobile Optimization**: Foco especial na performance mobile
+- **Lazy Loading**: On-demand component loading
+- **Image Optimization**: Responsive and optimized images
+- **Caching**: Implemented caching strategies
+- **Bundle Splitting**: Split code for better performance
+- **Mobile Optimization**: Extra focus on mobile speed
 
-## 🔄 Funcionalidades Avançadas
+## 🔄 Advanced Features
 
-### Sistema de Avaliações
-- **Verificação de Compra**: Apenas compradores podem avaliar
-- **Avaliação por Estrelas**: Sistema de 1-5 estrelas
-- **Comentários**: Texto opcional com avaliação
-- **Persistência**: Avaliações salvas e exibidas
+### Review System
+- **Purchase Verification**: Only verified buyers can review
+- **Star Rating**: 1–5 star system
+- **Comments**: Optional text reviews
+- **Persistence**: Reviews stored and displayed
 
-### Gerenciamento de Endereços
-- **Múltiplos Endereços**: Usuários podem cadastrar vários endereços
-- **Endereço Principal**: Marcação de endereço principal
-- **Busca Automática**: Integração com ViaCEP
-- **Validação**: Verificação de dados obrigatórios
+### Address Management
+- **Multiple Addresses**: Users can store several addresses
+- **Main Address**: Mark primary address
+- **Automatic Lookup**: ViaCEP integration
+- **Validation**: Required fields checked
 
-### Sincronização de Dados
-- **Carrinho Offline**: Funciona mesmo sem login
-- **Sincronização Automática**: Dados sincronizam ao fazer login
-- **Persistência**: Dados mantidos entre sessões
-- **Favoritos**: Sistema integrado com carrinho
+### Data Sync
+- **Offline Cart**: Works without login
+- **Automatic Sync**: Data synchronized on login
+- **Persistence**: Data saved between sessions
+- **Favorites**: Integrated with cart system
 
-### Navegação Mobile Otimizada
-- **Menu Integrado**: Menu hambúrguer no header com funcionalidades principais
-- **Acesso à Conta**: Seção dedicada para "Minha Conta" e "Meus Pedidos"
-- **Navegação Simplificada**: Remoção da navegação inferior
-- **Páginas Legais**: FAQ, Termos de Uso e Política de Privacidade no footer
+### Mobile Navigation
+- **Integrated Menu**: Hamburger menu with main features
+- **Account Access**: Dedicated section for "My Account" and "My Orders"
+- **Simplified Navigation**: Bottom navigation removed
+- **Legal Pages**: FAQ, Terms, Privacy Policy in footer
 
-## 🤝 Contribuição
+## 🤝 Contributing
 
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## 📄 Licença
+## 📞 Contact
 
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 📞 Contato
-
-- **Desenvolvedor**: Theo Hideki
+- **Developer**: Theo Hideki
 - **GitHub**: [@theohidekii](https://github.com/theohidekii)
-- **Projeto**: [Coisa](https://github.com/theohidekii/Coisa)
+- **Project**: [Coisa](https://github.com/theohidekii/Coisa)
 
 ---
 
-⭐ Se este projeto te ajudou, considere dar uma estrela no repositório!
+⭐ If this project helped you, consider giving it a star on GitHub!
