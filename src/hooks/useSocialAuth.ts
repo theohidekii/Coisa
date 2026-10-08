@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@/context/UserContext';
 import { useToast } from '@/hooks/use-toast';
+import type { FacebookLoginResponse, GoogleCredentialResponse } from '@/types/social';
+import type { UserAddress } from '@/context/UserContext';
 
 interface SocialUserData {
   id: string;
@@ -9,7 +11,7 @@ interface SocialUserData {
   email: string;
   telefone: string;
   cpf: string;
-  addresses: any[];
+  addresses: UserAddress[];
 }
 
 export const useSocialAuth = () => {
@@ -18,7 +20,7 @@ export const useSocialAuth = () => {
   const { setUserData } = useUser();
   const { toast } = useToast();
 
-  const handleGoogleLogin = async (response: any) => {
+  const handleGoogleLogin = async (response: GoogleCredentialResponse) => {
     setIsLoading(true);
     
     try {
@@ -54,7 +56,7 @@ export const useSocialAuth = () => {
     }
   };
 
-  const handleFacebookLogin = async (response: any) => {
+  const handleFacebookLogin = async (response: FacebookLoginResponse) => {
     setIsLoading(true);
     
     try {
@@ -88,7 +90,7 @@ export const useSocialAuth = () => {
     }
   };
 
-  const handleSocialError = (error: any) => {
+  const handleSocialError = (error: unknown) => {
     console.error('Erro no login social:', error);
     toast({
       title: "Erro no login social",

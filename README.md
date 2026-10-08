@@ -140,7 +140,7 @@ O projeto foi construído com foco em três pilares:
 | **Formulários** | React Hook Form + Zod (`@hookform/resolvers`) |
 | **Estado** | React Context API (`UserContext`, `CartContext`) + TanStack Query (provider configurado) |
 | **Gráficos** | Recharts |
-| **Autenticação social** | `@react-oauth/google`, `react-facebook-login` |
+| **Autenticação social** | `@react-oauth/google`, SDK do Facebook (simulado) |
 | **APIs externas** | ViaCEP, Google Maps Geocoding API, Nominatim/OpenStreetMap (fallback) |
 | **Qualidade** | ESLint 9 + `typescript-eslint`, `eslint-plugin-react-hooks` |
 | **Dependências reservadas** | `firebase`, `pg`, `dotenv` (instaladas para a futura camada de dados; ainda não utilizadas no `src/`) |
@@ -214,15 +214,11 @@ Coisa/
 │   ├── pages/                       # Uma tela por rota (ver tabela de rotas)
 │   ├── utils/
 │   │   ├── googleFreightCalculator.ts      # ⭐ Motor de frete em uso
-│   │   ├── googleMapsFreightCalculator.ts  # Variante Google Maps + Nominatim
-│   │   ├── advancedFreightCalculator.ts    # Variante Nominatim (sem Google)
-│   │   ├── distanceCalculator.ts           # Tabela de coordenadas por prefixo de CEP
-│   │   └── testGoogleMaps.ts               # Diagnóstico da API do Google
 │   ├── App.tsx                      # Providers + definição de rotas
 │   ├── main.tsx                     # Ponto de entrada
 │   └── index.css                    # Tokens de tema (CSS variables) + Tailwind
 ├── db.js                            # Stub de conexão PostgreSQL (pg Pool)
-├── env.example                      # Variáveis de ambiente do banco
+├── env.example                      # Modelo de variáveis de ambiente (Maps + banco)
 ├── SOCIAL_LOGIN_SETUP.md            # Guia de configuração do OAuth
 ├── components.json                  # Configuração do shadcn/ui
 ├── tailwind.config.ts
@@ -383,16 +379,13 @@ git clone https://github.com/theohidekii/Coisa.git
 cd Coisa
 
 # 2. Instale as dependências
-npm install --legacy-peer-deps
+npm ci
 
 # 3. Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
 A aplicação ficará disponível em **http://localhost:8080**.
-
-> [!NOTE]
-> A flag `--legacy-peer-deps` é necessária porque `react-facebook-login@4` declara *peer dependency* em React 16, enquanto o projeto usa React 18. A biblioteca funciona normalmente; a substituição por uma alternativa mantida está no [Roadmap](#%EF%B8%8F-roadmap).
 
 ### Build de produção
 
@@ -426,15 +419,11 @@ Cadastre `http://localhost:8080` como origem autorizada no Google Cloud Console 
 
 ### Google Maps (frete)
 
-A chave da Geocoding API é lida em `src/utils/googleFreightCalculator.ts`. A configuração recomendada é movê-la para uma variável de ambiente Vite:
+A chave da Geocoding API é lida da variável de ambiente `VITE_GOOGLE_MAPS_API_KEY`. Sem ela, o cálculo de frete falha com uma mensagem explicando o que configurar.
 
 ```bash
-# .env.local  (não versionar)
-VITE_GOOGLE_MAPS_API_KEY=sua-chave-aqui
-```
-
-```ts
-const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+cp env.example .env.local   # não versionar
+# edite VITE_GOOGLE_MAPS_API_KEY=sua-chave
 ```
 
 > [!WARNING]
@@ -505,14 +494,11 @@ Transparência sobre o estado atual, para quem for evoluir o projeto:
 | --- | --- | --- |
 | 1 | Catálogo, usuário, pedidos e vendas são **dados mockados** no código | Não há persistência entre dispositivos |
 | 2 | O `Checkout` usa uma **lista de itens fixa** em vez do `CartContext` | O resumo do checkout não reflete o carrinho real |
-| 3 | O `CartContext` consome `user`/`isLoggedIn`, que o `UserContext` não expõe | A sincronização carrinho ↔ usuário no login não é disparada |
-| 4 | Limite de frete grátis divergente: **R$ 150** na interface × **R$ 199** no motor de frete | Mensagens e valores podem não coincidir |
-| 5 | Pagamento é **simulado** (sem gateway) | Nenhuma cobrança real é feita |
-| 6 | `/admin` e `/relatorio-vendas` **sem proteção de rota** | Qualquer visitante acessa o painel |
-| 7 | Três implementações de frete coexistem em `utils/` (apenas `googleFreightCalculator` está em uso) | Código duplicado |
-| 8 | Bundle único de ~724 kB (≈ 187 kB gzip), sem *code splitting* por rota | Carregamento inicial mais pesado em redes móveis |
-| 9 | `db.js` usa CommonJS (`require`) em um pacote `"type": "module"` | Precisa ser convertido para ESM ou `.cjs` ao criar a API |
-| 10 | Erro de sintaxe em `src/components/ui/pagination.tsx` e 23 erros de lint | `tsc --noEmit` e `npm run lint` não passam (o build do Vite conclui normalmente) |
+| 3 | Limite de frete grátis divergente: **R$ 150** na interface × **R$ 199** no motor de frete | Mensagens e valores podem não coincidir |
+| 4 | Pagamento é **simulado** (sem gateway) | Nenhuma cobrança real é feita |
+| 5 | `/admin` e `/relatorio-vendas` **sem proteção de rota** | Qualquer visitante acessa o painel |
+| 6 | Bundle único de ~724 kB (≈ 187 kB gzip), sem *code splitting* por rota | Carregamento inicial mais pesado em redes móveis |
+| 7 | `db.js` usa CommonJS (`require`) em um pacote `"type": "module"` | Precisa ser convertido para ESM ou `.cjs` ao criar a API |
 
 ---
 
@@ -522,7 +508,7 @@ Transparência sobre o estado atual, para quem for evoluir o projeto:
 - [ ] API REST (Node.js/Express ou Next.js API Routes) sobre PostgreSQL
 - [ ] Modelagem: produtos, categorias, estoque, usuários, endereços, pedidos, avaliações
 - [ ] Autenticação real com JWT/sessão e verificação de token OAuth no servidor
-- [ ] Mover todas as chaves para variáveis de ambiente
+- [x] Mover a chave do Google Maps para variável de ambiente
 
 **Fase 2 — Fluxo de compra real**
 - [ ] Conectar o checkout ao `CartContext`
@@ -537,11 +523,15 @@ Transparência sobre o estado atual, para quem for evoluir o projeto:
 
 **Fase 4 — Qualidade e performance**
 - [ ] *Lazy loading* de rotas com `React.lazy` + `Suspense`
-- [ ] Remover calculadoras de frete legadas e páginas de teste do build de produção
-- [ ] Corrigir erros de TypeScript/ESLint e ativar `strict: true`
+- [x] Remover calculadoras de frete legadas
+- [ ] Remover páginas de teste do build de produção
+- [x] Corrigir erros de TypeScript/ESLint
+- [ ] Ativar `strict: true`
 - [ ] Testes unitários do motor de frete (Vitest) e E2E do fluxo de compra (Playwright)
-- [ ] Pipeline de CI (GitHub Actions) com lint, type-check, testes e build
-- [ ] Substituir `react-facebook-login` por alternativa compatível com React 18
+- [x] Pipeline de CI (GitHub Actions) com lint, type-check e build
+- [ ] Adicionar testes à CI
+- [x] Remover SDK do Facebook (simulado) (não era usado e quebrava o `npm install`)
+- [ ] Integrar o SDK oficial do Facebook no lugar do login simulado
 - [ ] SEO: `lang="pt-BR"`, meta tags por página e sitemap
 
 ---

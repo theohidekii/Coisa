@@ -1,10 +1,11 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import type { FacebookLoginResponse, GoogleCredentialResponse } from '@/types/social';
 
 interface SocialButtonsProps {
-  onGoogleSuccess: (response: any) => void;
-  onFacebookSuccess: (response: any) => void;
-  onError: (error: any) => void;
+  onGoogleSuccess: (response: GoogleCredentialResponse) => void;
+  onFacebookSuccess: (response: FacebookLoginResponse) => void;
+  onError: (error: unknown) => void;
   isLoading: boolean;
 }
 

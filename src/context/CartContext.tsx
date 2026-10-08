@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { useUser } from './UserContext';
 
-interface CartItem {
+export interface CartItem {
   id: string;
   name: string;
   price: number;
@@ -63,7 +63,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [favoriteItems, setFavoriteItems] = useState<FavoriteItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { user, isLoggedIn } = useUser();
+  const { userData: user } = useUser();
+  const isLoggedIn = user !== null;
 
   // Carregar dados do localStorage na inicialização
   useEffect(() => {
@@ -89,7 +90,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (savedFavorites) {
         const parsedFavorites = JSON.parse(savedFavorites);
         // Converter strings de data de volta para objetos Date
-        const favoritesWithDates = parsedFavorites.map((item: any) => ({
+        const favoritesWithDates = parsedFavorites.map((item: Omit<FavoriteItem, 'addedAt'> & { addedAt: string }) => ({
           ...item,
           addedAt: new Date(item.addedAt)
         }));

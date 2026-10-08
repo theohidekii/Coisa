@@ -28,6 +28,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
 import { calculateFreightForCart } from "@/utils/googleFreightCalculator";
+import type { ViaCepAddress } from "@/types/address";
 
 interface CartItem {
   id: number;
@@ -73,7 +74,7 @@ const CheckoutPage = () => {
   const [shippingInfo, setShippingInfo] = useState<ShippingInfo | null>(null);
   const [cep, setCep] = useState("");
   const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
-  const [addressInfo, setAddressInfo] = useState<any>(null);
+  const [addressInfo, setAddressInfo] = useState<ViaCepAddress | null>(null);
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);

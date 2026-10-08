@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { calculateFreightForCart } from "@/utils/googleFreightCalculator";
 import { useCart } from "@/context/CartContext";
+import type { ShippingSummary, ViaCepAddress } from "@/types/address";
 
 interface CartItem {
   id: number;
@@ -25,8 +26,8 @@ const Carrinho = () => {
   const [cep, setCep] = useState("");
   const [shippingCost, setShippingCost] = useState(0);
   const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
-  const [shippingInfo, setShippingInfo] = useState<any>(null);
-  const [addressInfo, setAddressInfo] = useState<any>(null);
+  const [shippingInfo, setShippingInfo] = useState<ShippingSummary | null>(null);
+  const [addressInfo, setAddressInfo] = useState<ViaCepAddress | null>(null);
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
 
   const calculateSubtotal = () => {

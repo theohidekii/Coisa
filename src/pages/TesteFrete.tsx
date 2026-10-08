@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Package, ShoppingCart, Calculator } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import ShippingCalculator from "@/components/ShippingCalculator";
+import type { CartItem } from "@/context/CartContext";
+
+type TestProduct = Pick<CartItem, "id" | "name" | "price" | "weightKg" | "lengthCm" | "widthCm" | "heightCm"> & { description: string };
 
 const TesteFrete = () => {
   const { cartItems, addToCart, getCartTotal } = useCart();
@@ -59,12 +62,13 @@ const TesteFrete = () => {
     }
   ];
 
-  const addTestProduct = (product: any) => {
+  const addTestProduct = (product: TestProduct) => {
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       image: "/placeholder.svg",
+      category: "Teste",
       weightKg: product.weightKg,
       lengthCm: product.lengthCm,
       widthCm: product.widthCm,

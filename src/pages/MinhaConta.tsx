@@ -9,13 +9,14 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useUser } from "@/context/UserContext";
+import type { ViaCepAddress } from "@/types/address";
 
 const MinhaConta = () => {
   const { userData, addAddress, removeAddress, setDefaultAddress, updateUserInfo } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [showNewAddressForm, setShowNewAddressForm] = useState(false);
   const [isLoadingAddress, setIsLoadingAddress] = useState(false);
-  const [addressInfo, setAddressInfo] = useState<any>(null);
+  const [addressInfo, setAddressInfo] = useState<ViaCepAddress | null>(null);
   const [cep, setCep] = useState("");
   const [newAddress, setNewAddress] = useState({
     name: "",
