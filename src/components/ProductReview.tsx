@@ -299,7 +299,7 @@ const ProductReview = ({
                     <div className="flex items-center gap-2">
                       <span className="font-medium text-gray-900">{review.userName}</span>
                       {review.verified && (
-                        <CheckCircle className="h-4 w-4 text-green-500" title="Comprador verificado" />
+                        <span title="Comprador verificado"><CheckCircle className="h-4 w-4 text-green-500" aria-label="Comprador verificado" /></span>
                       )}
                     </div>
                     <span className="text-sm text-gray-500">

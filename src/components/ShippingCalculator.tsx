@@ -7,12 +7,13 @@ import { Separator } from "@/components/ui/separator";
 import { MapPin, Truck, Package, Calculator, CheckCircle, Clock, Weight, Route, DollarSign, AlertCircle } from "lucide-react";
 import { calculateFreightForCart, FreightBreakdown } from "@/utils/googleFreightCalculator";
 import { useCart } from "@/context/CartContext";
+import type { ViaCepAddress } from "@/types/address";
 
 const ShippingCalculator = () => {
   const { cartItems, getCartTotal } = useCart();
   const [cep, setCep] = useState("");
   const [addressNumber, setAddressNumber] = useState("");
-  const [cepInfo, setCepInfo] = useState<any>(null);
+  const [cepInfo, setCepInfo] = useState<ViaCepAddress | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [calculation, setCalculation] = useState<FreightBreakdown | null>(null);
   const [error, setError] = useState<string | null>(null);

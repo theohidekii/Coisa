@@ -7,6 +7,9 @@ import { Link } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useCart } from '@/context/CartContext';
+import type { CartItem } from '@/context/CartContext';
+
+type TestProduct = Omit<CartItem, 'quantity'> & { weight?: number };
 
 const TesteCarrinho = () => {
   const { cartItems, addToCart, clearCart, getCartTotal, getCartItemCount } = useCart();
@@ -114,7 +117,7 @@ const TesteCarrinho = () => {
     }
   ];
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: TestProduct) => {
     addToCart({
       id: product.id,
       name: product.name,

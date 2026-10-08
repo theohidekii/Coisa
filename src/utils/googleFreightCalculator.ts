@@ -1,6 +1,7 @@
 // googleFreightCalculator.ts
 // Sistema de frete com Google Maps API para máxima precisão
-const GOOGLE_API_KEY = "AIzaSyAMPrCsvbfLFKAg4EHfvfDy5HbGDhbtnLE";
+// A chave vem do ambiente (.env), nunca do código. Restrinja-a por domínio no Google Cloud.
+const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
 const WAREHOUSE_CEP = "09130-410, Santo André, SP";
 
 export type CartItem = {
@@ -61,9 +62,12 @@ async function geocodeAddress(address: string): Promise<{ lat: number; lng: numb
     return cached;
   }
 
+  if (!GOOGLE_API_KEY) {
+    throw new Error('VITE_GOOGLE_MAPS_API_KEY não configurada. Veja a seção Configuração do README.');
+  }
+
   try {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_API_KEY}`;
-    console.log('🌐 Fazendo requisição para Google Maps:', url);
     
     const resp = await fetch(url);
     const data = await resp.json();
@@ -226,9 +230,22 @@ export async function calculateFreight(customerCep: string, cart: CartItem[]): P
 }
 
 // Função para converter produtos do carrinho para o formato CartItem
-export function convertCartItemsToFreightItems(cartItems: any[]): CartItem[] {
+/** Item de carrinho como chega da UI; campos de frete ausentes usam a embalagem padrão. */
+export type FreightSourceItem = {
+  id?: string | number;
+  sku?: string;
+  name?: string;
+  quantity?: number;
+  weightKg?: number;
+  lengthCm?: number;
+  widthCm?: number;
+  heightCm?: number;
+  price?: number;
+};
+
+export function convertCartItemsToFreightItems(cartItems: FreightSourceItem[]): CartItem[] {
   return cartItems.map(item => ({
-    sku: item.id || item.sku || `item-${item.name}`,
+    sku: String(item.id ?? item.sku ?? `item-${item.name}`),
     quantity: item.quantity || 1,
     weightKg: item.weightKg || DEFAULT_PACKAGING.weightKg,
     lengthCm: item.lengthCm || DEFAULT_PACKAGING.lengthCm,
@@ -241,7 +258,7 @@ export function convertCartItemsToFreightItems(cartItems: any[]): CartItem[] {
 // Função para calcular frete do carrinho (integração com o sistema existente)
 export async function calculateFreightForCart(
   customerCep: string, 
-  cartItems: any[]
+  cartItems: FreightSourceItem[]
 ): Promise<FreightBreakdown> {
   const freightItems = convertCartItemsToFreightItems(cartItems);
   
